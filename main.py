@@ -22,7 +22,7 @@ for i in range(3):
 
 #Update
 def update():
-    for cloud in hintergrund.clouds:
+    for cloud in clouds:
         if cloud.left <= WIDTH:
             cloud.left += cloud.vx
         else:
@@ -35,7 +35,7 @@ def update():
 
 
 def draw():
-    screen.blit("backgroundcolorforest",(0,0))
-    for cloud in hintergrund.clouds:
+    screen.blit("HintergrundTag",(0,0))
+    for cloud in clouds:
         cloud.draw()
 pgzrun.go()
