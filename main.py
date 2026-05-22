@@ -1,5 +1,6 @@
 import pgzrun
 import random
+import hintergrund
 
 WIDTH = 1280
 HEIGHT = 720
@@ -17,9 +18,11 @@ clouds = [
 for i in range(3):
     clouds[i].vx = i+1
 
+
+
 #Update
 def update():
-    for cloud in clouds:
+    for cloud in hintergrund.clouds:
         if cloud.left <= WIDTH:
             cloud.left += cloud.vx
         else:
@@ -33,6 +36,6 @@ def update():
 
 def draw():
     screen.blit("backgroundcolorforest",(0,0))
-    for cloud in clouds:
+    for cloud in hintergrund.clouds:
         cloud.draw()
 pgzrun.go()
