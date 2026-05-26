@@ -8,13 +8,13 @@ import random
 
 #Methods
     #action on mouse
-def mouse_monster(button,pos):
+def mouse_inventory(button,pos):
     pass
 
     #update
-def update_monster():
+def update_inventory():
     pass
 
     #draw
-def draw_monster():
+def draw_inventory():
     pass

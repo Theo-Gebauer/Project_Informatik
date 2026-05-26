@@ -1,0 +1,55 @@
+from pgzero.actor import Actor
+import global_var
+import random
+
+
+#Actors
+clouds = [
+    Actor('cloud1', topleft=(0,global_var.max_height+ 10)),
+    Actor('cloud2', topleft=(200,global_var.max_height+50)),
+    Actor('cloud3', topleft=(500,global_var.max_height+25)),
+    Actor('cloud4', topleft=(500,global_var.max_height+60))
+]
+
+tower = Actor('turm', midbottom=(global_var.WIDTH//2, global_var.HEIGHT)) 
+
+background = Actor('hintergrund_tag', bottomright=(global_var.WIDTH, global_var.HEIGHT), anchor=('left', 'bottom'))
+
+for i in range(4):
+    clouds[i].vx = i+1
+
+
+#Methods
+    #action on mouse
+def mouse_tower(button,pos):     
+    if button == 4 and background.y < 1680:
+        global_var.scroll_y = 30
+    elif button == 5 and background.y > global_var.HEIGHT:
+        global_var.scroll_y = -30
+
+    #update
+def update_tower():
+    background.y += global_var.scroll_y
+    tower.y += global_var.scroll_y
+    global_var.absolutey += global_var.scroll_y
+
+    for cloud in clouds:
+        if cloud.left <= global_var.WIDTH:
+            cloud.left += cloud.vx
+        else:
+            cloud.left = -450
+            cloud.vx = random.randint(1,3)
+        cloud.y += global_var.scroll_y
+
+    if not global_var.autoscroll or not (global_var.HEIGHT < background.y < 1680):
+       global_var.scroll_y = 0
+       global_var.autoscroll = False
+     
+    #draw
+def draw_tower():
+    background.draw()
+    for i in range(2,4):
+        clouds[i].draw()
+    tower.draw()
+    for i in range(0,2):
+        clouds[i].draw()
