@@ -29,13 +29,11 @@ def update():
             cloud.left = -300
             cloud.vx = random.randint(1,3)
 
-
    
-    
 
 
 def draw():
-    screen.blit("HintergrundTag",(0,0))
+    screen.blit("hintergrund_tag",(0,0))
     for cloud in clouds:
         cloud.draw()
 pgzrun.go()
