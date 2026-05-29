@@ -21,10 +21,13 @@ def button_pressed(pos_cursor, pos_button_x, pos_button_y, width_button, height_
 def mouse_global_var(button):     
     global scroll_y
     global absolutey
+
     if button == 4 and absolutey < 1680:
         scroll_y = 30
     elif button == 5 and absolutey > HEIGHT:
         scroll_y = -30
+
+        
 
     #update
 def update_global_var():

@@ -2,20 +2,74 @@ from pgzero.actor import Actor
 import global_var
 import random
 
-#vars
-pos_selected = [0,0]
-inventory = []
-inventory_open = False
 
-#Actors
-inventory_button = Actor('inventory_button', topleft = (10, 10))
-for i in range(5):
-    inventory.append([])
-    for j in range(5):
-        inventory[i].append(Actor('panel_brown', center=(42 + i*65, 112 + j*65)))
+class Inventory:
+    def __init__(self, columns, rows, x, y):
+        self.inventory_background = []
+        self.item_slot = []
+        self.pos_selected = [-1,0]
+        self.open = False
 
-class item():
-    def __init__(self, max_count, count, value, name, attribute, location, type):
+        item = Item(1,1,1,1,1,1,1,'worm')
+
+
+
+        for i in range(columns):
+            self.inventory_background.append([])
+            self.item_slot.append([])
+            for j in range(rows):
+                self.inventory_background[i].append(Actor('panel_brown', center = (x + i*65, y + j*65), anchor = ('center', 'center')))
+                self.item_slot[i].append(0)
+
+        self.add_item(1, 2, item)
+    
+    def add_item(self, colum, row, item):
+        self.item_slot[colum][row] = item
+        
+    def del_item(self, colum, row):
+        self.item_slot[colum][row] = 0
+
+    def toggle_open(self):
+        if self.open:
+            self.open = False
+        else:
+            self.open = True
+
+    def mouse(self, button, pos):
+        if global_var.button_pressed(pos, 175, 245, 165, 165) and button == 1 and self.open:
+            found = False
+            for i in range(len(self.item_slot)):
+                for j in range(len(self.item_slot[i])):
+                    if global_var.button_pressed(pos, self.inventory_background[i][j].x, self.inventory_background[i][j].y, 32, 32):
+                        if self.pos_selected[0] >= 0:
+                            self.inventory_background[self.pos_selected[0]][self.pos_selected[1]].image = 'panel_brown'
+                            self.add_item(i, j, self.item_slot[self.pos_selected[0]][self.pos_selected[1]])
+                            self.del_item(self.pos_selected[0], self.pos_selected[1])
+                            self.pos_selected = [-1,0]
+                        else:
+                            self.pos_selected = [i,j]                        
+                            self.inventory_background[i][j].image = 'panel_brown_selected'
+                        found = True
+                        break
+                if found:
+                    break
+        elif self.pos_selected[0] >= 0:
+            self.inventory_background[self.pos_selected[0]][self.pos_selected[1]].image = 'panel_brown'
+            self.pos_selected = [-1,0]
+            
+    def draw(self):
+        if self.open:
+            for i in range(len(self.item_slot)):
+                for j in range(len(self.item_slot[i])):
+                    self.inventory_background[i][j].draw()
+                    if self.item_slot[i][j] != 0:
+                        self.item_slot[i][j].actor.center = (self.inventory_background[i][j].x, self.inventory_background[i][j].y)
+                        self.item_slot[i][j].actor.draw()
+    
+        
+
+class Item():
+    def __init__(self, max_count, count, value, name, attribute, location, type, image):
         self.max_count = max_count
         self.count = count
         self.value = value
@@ -23,47 +77,8 @@ class item():
         self.attribute = attribute
         self.location = location
         self.type = type
+
+        self.actor = Actor(image)
     
     def move(self, new_location):
         pass
-
-        
-
-
-#Methods
-    #action on mouse
-def mouse_inventory(button,pos):
-    global inventory
-    global pos_selected
-    global inventory_open
-
-    if global_var.button_pressed(pos, 30, 30, 30, 30) and button == 1:
-        if not inventory_open:
-            inventory_open = True
-        else:
-            inventory_open = False
-    elif global_var.button_pressed(pos, 175, 245, 165, 165) and button == 1:
-        found = False
-        for i in range(len(inventory)):
-            for j in range(len(inventory[i])):
-                if global_var.button_pressed(pos, 42 + i*65, 112 + j*65, 32, 32):
-                    inventory[pos_selected[0]][pos_selected[1]].image = 'panel_brown'
-                    inventory[i][j].image = 'panel_brown_selected'
-
-                    pos_selected = [i,j]
-                    found = True
-                    break
-            if found:
-                break
-    #update
-def update_inventory():
-    pass
-
-    #draw
-def draw_inventory():
-    inventory_button.draw()
-    if inventory_open:
-        for row in inventory:
-            for table in row:
-                table.draw()
-    
