@@ -21,17 +21,13 @@ for i in range(4):
 
 #Methods
     #action on mouse
-def mouse_tower(button,pos):     
-    if button == 4 and background.y < 1680:
-        global_var.scroll_y = 30
-    elif button == 5 and background.y > global_var.HEIGHT:
-        global_var.scroll_y = -30
+def mouse_tower(button,pos): 
+    pass    
 
     #update
 def update_tower():
     background.y += global_var.scroll_y
     tower.y += global_var.scroll_y
-    global_var.absolutey += global_var.scroll_y
 
     for cloud in clouds:
         if cloud.left <= global_var.WIDTH:
@@ -40,10 +36,6 @@ def update_tower():
             cloud.left = -450
             cloud.vx = random.randint(1,3)
         cloud.y += global_var.scroll_y
-
-    if not global_var.autoscroll or not (global_var.HEIGHT < background.y < 1680):
-       global_var.scroll_y = 0
-       global_var.autoscroll = False
      
     #draw
 def draw_tower():

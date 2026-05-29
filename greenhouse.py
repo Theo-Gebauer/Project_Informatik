@@ -10,7 +10,7 @@ import random
     #action on mouse
 def mouse_greenhouse(button,pos):
     if button == 1 and global_var.button_pressed(pos,975 + global_var.absolutex,-20 + global_var.absolutey,125,110):
-        pass#global_var.scene = 2
+        global_var.scene = 2
 
     #update
 def update_greenhouse():
