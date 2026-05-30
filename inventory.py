@@ -1,18 +1,15 @@
 from pgzero.actor import Actor
 import global_var
-import random
-
+from items import Item
 
 class Inventory:
     def __init__(self, columns, rows, x, y):
         self.inventory_background = []
         self.item_slot = []
-        self.pos_selected = [-1,0]
-        self.open = False
+        global_var.inventory_pos_selected = None
+        global_var.inventory_open = False
 
-        item = Item(1,1,1,1,1,1,1,'worm')
-
-
+        item = Item(1,1,1,1,100,'plant_item1')
 
         for i in range(columns):
             self.inventory_background.append([])
@@ -21,7 +18,7 @@ class Inventory:
                 self.inventory_background[i].append(Actor('panel_brown', center = (x + i*65, y + j*65), anchor = ('center', 'center')))
                 self.item_slot[i].append(0)
 
-        self.add_item(1, 2, item)
+        self.add_item(0, 0, item)
     
     def add_item(self, colum, row, item):
         self.item_slot[colum][row] = item
@@ -29,57 +26,50 @@ class Inventory:
     def del_item(self, colum, row):
         self.item_slot[colum][row] = 0
 
-    def toggle_open(self):
-        if self.open:
-            self.open = False
-        else:
-            self.open = True
+    def empty(self, colum, row):
+        return self.item_slot[colum][row] == 0
 
     def mouse(self, button, pos):
-        if global_var.button_pressed(pos, 175, 245, 165, 165) and button == 1 and self.open:
+        if global_var.button_pressed(pos, 
+                                     len(self.inventory_background) * 33 + self.inventory_background[0][0].x - 32,
+                                     len(self.inventory_background[0]) * 33 + self.inventory_background[0][0].y - 32, 
+                                     len(self.inventory_background) * 33, 
+                                     len(self.inventory_background[0]) * 33) and button == 1 and global_var.inventory_open:
             found = False
             for i in range(len(self.item_slot)):
                 for j in range(len(self.item_slot[i])):
                     if global_var.button_pressed(pos, self.inventory_background[i][j].x, self.inventory_background[i][j].y, 32, 32):
-                        if self.pos_selected[0] >= 0:
-                            self.inventory_background[self.pos_selected[0]][self.pos_selected[1]].image = 'panel_brown'
+                        print(self)
+                        print(global_var.inventory_selected)
+                        if global_var.inventory_pos_selected is not None:
+                            global_var.inventory_selected.inventory_background[global_var.inventory_pos_selected[0]][global_var.inventory_pos_selected[1]].image = 'panel_brown'
+                            
                             item_temp = self.item_slot[i][j]
-                            self.add_item(i, j, self.item_slot[self.pos_selected[0]][self.pos_selected[1]])
-                            self.add_item(self.pos_selected[0], self.pos_selected[1], item_temp)
-                            self.pos_selected = [-1,0]
-                        else:
-                            self.pos_selected = [i,j]                        
+                            self.add_item(i, j, global_var.inventory_selected.item_slot[global_var.inventory_pos_selected[0]][global_var.inventory_pos_selected[1]])
+                            global_var.inventory_selected.add_item(global_var.inventory_pos_selected[0], global_var.inventory_pos_selected[1], item_temp)
+
+                            global_var.inventory_pos_selected = None
+                            global_var.inventory_selected = None
+                            print('getauscht')
+                        else:      
                             self.inventory_background[i][j].image = 'panel_brown_selected'
+                            global_var.inventory_pos_selected = [i,j]  
+                            global_var.inventory_selected = self
+                            print(global_var.inventory_pos_selected)                
                         found = True
                         break
                 if found:
                     break
-        elif self.pos_selected[0] >= 0:
-            self.inventory_background[self.pos_selected[0]][self.pos_selected[1]].image = 'panel_brown'
-            self.pos_selected = [-1,0]
-            
+        '''elif global_var.inventory_pos_selected is not None:
+            global_var.inventory_selected.inventory_background[global_var.inventory_pos_selected[0]][global_var.inventory_pos_selected[1]].image = 'panel_brown'
+            global_var.inventory_pos_selected = None
+            global_var.inventory_selected = None
+        '''    
     def draw(self):
-        if self.open:
+        if global_var.inventory_open:
             for i in range(len(self.item_slot)):
                 for j in range(len(self.item_slot[i])):
                     self.inventory_background[i][j].draw()
                     if self.item_slot[i][j] != 0:
                         self.item_slot[i][j].actor.center = (self.inventory_background[i][j].x, self.inventory_background[i][j].y)
                         self.item_slot[i][j].actor.draw()
-    
-        
-
-class Item():
-    def __init__(self, max_count, count, value, name, attribute, location, type, image):
-        self.max_count = max_count
-        self.count = count
-        self.value = value
-        self.name = name
-        self.attribute = attribute
-        self.location = location
-        self.type = type
-
-        self.actor = Actor(image)
-    
-    def move(self, new_location):
-        pass

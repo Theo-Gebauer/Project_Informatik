@@ -6,6 +6,7 @@ import greenhouse
 import alchemy
 import inventory
 import waves
+import greenhouse
 
 WIDTH = 1420
 HEIGHT = 930 
@@ -13,6 +14,7 @@ HEIGHT = 930
 inventory_player = inventory.Inventory(5,5,42,112)
 wave = waves.WaveManager()
 inventory_button = Actor('inventory_button', topleft = (10, 10))
+patch1 = greenhouse.Patch(200, 690)
 
 def on_mouse_down(button, pos):
     menu.mouse_menu(button, pos)
@@ -27,16 +29,24 @@ def on_mouse_down(button, pos):
 
         inventory_player.mouse(button, pos)
         global_var.mouse_global_var(button)
-        if global_var.button_pressed(pos, 30, 30, 30, 30) and button == 1:
-            inventory_player.toggle_open()
-    print(pos)
+        if global_var.button_pressed(pos, 30, 40, 30, 40) and button == 1:
+            if global_var.inventory_open:
+                global_var.inventory_open = False
+            else:
+                global_var.inventory_open = True
+    #print(pos)
+    #print(global_var.absolutey)
 
 def update():
     tower.update_tower()
     menu.update_menu()
-    if global_var.game_started:
-        wave.update()
+
+    if global_var.game_started :
+        greenhouse.update_greenhouse()
+        #wave.update()
+
     global_var.update_global_var()
+    
 
 def draw():
     if global_var.scene == 1:

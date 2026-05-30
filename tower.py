@@ -3,6 +3,9 @@ import global_var
 import random
 
 
+#vars
+duration_day = 3600
+
 #Actors
 clouds = [
     Actor('cloud1', topleft=(0,global_var.max_height+ 10)),
@@ -29,6 +32,8 @@ def mouse_tower(button,pos):
 
     #update
 def update_tower():
+    global duration_day
+
     background.y += global_var.scroll_y
     tower.y += global_var.scroll_y
 
@@ -39,6 +44,11 @@ def update_tower():
             cloud.left = -450
             cloud.vx = random.randint(1,3)
         cloud.y += global_var.scroll_y
+
+    if duration_day > 0:
+        duration_day -= 1
+    else:
+        duration_day = 3600
      
     #draw
 def draw_tower():

@@ -10,6 +10,10 @@ scene = 1
 wave = 1
 game_started = False
 game_lost = False
+night = False
+inventory_open = False
+inventory_pos_selected = None
+inventory_selected = None
 
 #Methods
     #Method for testing if Button is pressed
