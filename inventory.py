@@ -43,8 +43,9 @@ class Inventory:
                     if global_var.button_pressed(pos, self.inventory_background[i][j].x, self.inventory_background[i][j].y, 32, 32):
                         if self.pos_selected[0] >= 0:
                             self.inventory_background[self.pos_selected[0]][self.pos_selected[1]].image = 'panel_brown'
+                            item_temp = self.item_slot[i][j]
                             self.add_item(i, j, self.item_slot[self.pos_selected[0]][self.pos_selected[1]])
-                            self.del_item(self.pos_selected[0], self.pos_selected[1])
+                            self.add_item(self.pos_selected[0], self.pos_selected[1], item_temp)
                             self.pos_selected = [-1,0]
                         else:
                             self.pos_selected = [i,j]                        

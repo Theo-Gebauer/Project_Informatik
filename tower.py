@@ -22,7 +22,10 @@ for i in range(4):
 #Methods
     #action on mouse
 def mouse_tower(button,pos): 
-    pass    
+    if button == 1 and global_var.button_pressed(pos,975 + global_var.absolutex,-950 + global_var.absolutey,125,110):
+        global_var.scene = 2
+    elif button == 1 and global_var.button_pressed(pos,665 + global_var.absolutex,630 + global_var.absolutey,180,100):
+        global_var.scene = 3
 
     #update
 def update_tower():

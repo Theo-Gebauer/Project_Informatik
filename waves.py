@@ -15,7 +15,6 @@ class WaveManager:
         self.spawn_delay = 60
 
     def update(self):
-
         self.spawn_timer += 1
 
         #spawning
@@ -25,8 +24,17 @@ class WaveManager:
                 hp = 50 + self.wave * 20
                 speed = self.wave * 1.5
 
-                monster = Monster("worm", hp, speed, global_var.absolutex, global_var.absolutey - 50)
-
+                monster = Monster("worm", hp, speed, global_var.absolutex, global_var.absolutey - 50, 'worm', [ 
+                    (740, 890), (830, 730),
+                    (615, 730), (500, 590),
+                    (740, 590), (830, 450),
+                    (615, 450), (500, 315),
+                    (710, 315), (830, 180),
+                    (615, 180), (500, 40),
+                    (710, 40), (830, -100),
+                    (615, -100), (500, -240)
+                    ])
+                
                 self.monsters.append(monster)
 
                 self.monsters_to_spawn -= 1
@@ -34,7 +42,9 @@ class WaveManager:
 
         #moving monsters
         for monster in self.monsters:
-            if monster.actor.x > global_var.absolutex + 720 and monster.layer % 2 == 0:
+            monster.move()
+
+            '''if monster.actor.x > global_var.absolutex + 720 and monster.layer % 2 == 0:
                 monster.move(3,-3)
             elif monster.actor.x < global_var.absolutex + 610 and monster.layer % 2 == 1:
                 monster.move(-3,-3)
@@ -42,7 +52,7 @@ class WaveManager:
                 monster.move(3,0)
             else:
                 monster.move(-3,0)
-
+'''
         #removing dead monsters
         self.monsters = [
             monster 

@@ -9,23 +9,37 @@ import math
 
 #Classes
 class Monster():
-    def __init__(self, type, hp, speed, x, y):
-        self.actor = Actor(type)
-        self.actor.pos = (x,y)
-
+    def __init__(self, image, hp, speed, x, y, type, waypoints):
         self.hp = hp
         self.speed = speed
         self.type = type
         self.layer = 0
+        self.type = type
+        self.waypoints = waypoints
+        self.next_waypoint = 0
 
-    def move(self, dx, dy):
-            distance = math.sqrt(dx**2 + dy**2)
+        self.actor = Actor(image)
+        self.actor.pos = (x,y)
 
-            dx = dx / distance
-            dy = dy / distance
+    def move(self):
+        target_x, target_y = self.waypoints[self.next_waypoint]
+
+        dx = target_x - self.actor.x
+        dy = target_y + global_var.absolutey - 930 - self.actor.y
+
+        distance = math.hypot(dx, dy)
+        if distance > self.speed:
+
+            dx /= distance
+            dy /= distance
 
             self.actor.x += dx * self.speed
             self.actor.y += dy * self.speed + global_var.scroll_y
+
+        elif self.next_waypoint + 1 < len(self.waypoints):
+            self.next_waypoint += 1
+        else:
+            global_var.game_lost = True
 
 
     def draw(self):

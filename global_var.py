@@ -2,13 +2,14 @@ WIDTH = 1420
 HEIGHT = 930 
 scroll_y = 0
 max_height = HEIGHT - 1680
-game_started = False
 autoscroll = False
 absolutex = 0
 absolutey = 930
 
 scene = 1
 wave = 1
+game_started = False
+game_lost = False
 
 #Methods
     #Method for testing if Button is pressed
@@ -22,9 +23,9 @@ def mouse_global_var(button):
     global scroll_y
     global absolutey
 
-    if button == 4 and absolutey < 1680:
+    if button == 4 and absolutey < 1680 and scene == 1:
         scroll_y = 30
-    elif button == 5 and absolutey > HEIGHT:
+    elif button == 5 and absolutey > HEIGHT and scene == 1:
         scroll_y = -30
 
         
@@ -34,13 +35,20 @@ def update_global_var():
     global scroll_y
     global absolutey
     global autoscroll
+    global game_started
+    global game_lost
     
     absolutey += scroll_y
 
     if not autoscroll or not (HEIGHT < absolutey < 1680):
        scroll_y = 0
        autoscroll = False
-
+    
+    if game_lost:
+        print("Verloren")
+        game_started = False
+        game_lost = False
+    
 
 #button ==
 #1 -> left_click
