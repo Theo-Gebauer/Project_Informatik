@@ -23,14 +23,21 @@ def button_pressed(pos_cursor, pos_button_x, pos_button_y, width_button, height_
 
 
     #action on mouse
-def mouse_global_var(button):     
+def mouse_global_var(button, pos):     
     global scroll_y
     global absolutey
+    global inventory_open
 
     if button == 4 and absolutey < 1680 and scene == 1:
         scroll_y = 30
     elif button == 5 and absolutey > HEIGHT and scene == 1:
         scroll_y = -30
+
+    if button_pressed(pos, 30, 40, 30, 40) and button == 1:
+        if inventory_open:
+            inventory_open = False
+        else:
+            inventory_open = True
 
         
 

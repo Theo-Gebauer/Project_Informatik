@@ -28,13 +28,8 @@ def on_mouse_down(button, pos):
             alchemy.mouse_alchemy(button, pos)
 
         inventory_player.mouse(button, pos)
-        global_var.mouse_global_var(button)
-        if global_var.button_pressed(pos, 30, 40, 30, 40) and button == 1:
-            if global_var.inventory_open:
-                global_var.inventory_open = False
-            else:
-                global_var.inventory_open = True
-    #print(pos)
+        global_var.mouse_global_var(button, pos)
+    print(pos)
     #print(global_var.absolutey)
 
 def update():
@@ -54,7 +49,7 @@ def draw():
         if global_var.game_started:
             wave.draw()
     elif global_var.scene == 2:
-        greenhouse.draw_greenhouse()
+        greenhouse.draw_greenhouse(screen)
     elif global_var.scene == 3:
         alchemy.draw_alchemy()
     if global_var.game_started:

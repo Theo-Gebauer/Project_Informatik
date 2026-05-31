@@ -9,7 +9,7 @@ background = Actor('greenhouse_background', center = (global_var.WIDTH//2, globa
 button_leave = Actor('startknopf', bottomleft = (20, 910), anchor = ('center', 'center'))
 
 for i in range(4):
-    patches.append(Patch(200 + i*250, 690))
+    patches.append(Patch(300 + i*250, 785))
 
 #Methods
     #action on mouse
@@ -26,9 +26,9 @@ def update_greenhouse():
         patch.update()
 
     #draw
-def draw_greenhouse():
+def draw_greenhouse(screen):
     background.draw()
     button_leave.draw()
     for patch in patches:
-        patch.draw()
+        patch.draw(screen)
 

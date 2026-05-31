@@ -9,7 +9,7 @@ class Inventory:
         global_var.inventory_pos_selected = None
         global_var.inventory_open = False
 
-        item = Item(1,1,1,1,100,'plant_item1')
+        item = Item(1,1,1,1,250,'plant_item1')
 
         for i in range(columns):
             self.inventory_background.append([])
@@ -63,8 +63,8 @@ class Inventory:
         '''elif global_var.inventory_pos_selected is not None:
             global_var.inventory_selected.inventory_background[global_var.inventory_pos_selected[0]][global_var.inventory_pos_selected[1]].image = 'panel_brown'
             global_var.inventory_pos_selected = None
-            global_var.inventory_selected = None
-        '''    
+            global_var.inventory_selected = None'''
+            
     def draw(self):
         if global_var.inventory_open:
             for i in range(len(self.item_slot)):
