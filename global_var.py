@@ -1,3 +1,8 @@
+from waves import WaveManager
+import random
+from items import Item
+from inventory import Inventory
+
 WIDTH = 1420
 HEIGHT = 930 
 scroll_y = 0
@@ -7,13 +12,34 @@ absolutex = 0
 absolutey = 930
 
 scene = 1
-wave = 1
+wave = WaveManager()
 game_started = False
+game_start = False
 game_lost = False
+time = 0
+duration_day = 1000
 night = False
+inventory_player = Inventory(5, 5, 42, 112)
 inventory_open = False
 inventory_pos_selected = None
 inventory_selected = None
+darkness = 0
+seed = None
+all_ingredients = {}
+all_effects = [
+        'poison',
+        'fire',
+        'ice',
+        'slow',
+        'pulse'
+]
+effect_to_color = {
+    'poison': (120, 0, 120),
+    'fire': (255, 80, 0),
+    'ice': (0, 150, 255),
+    'slow': (100, 100, 100),
+    'pulse': (255, 0, 255)
+}
 
 #Methods
     #Method for testing if Button is pressed
@@ -27,6 +53,9 @@ def mouse_global_var(button, pos):
     global scroll_y
     global absolutey
     global inventory_open
+    global inventory_player
+    global game_started
+    global autoscroll
 
     if button == 4 and absolutey < 1680 and scene == 1:
         scroll_y = 30
@@ -39,6 +68,9 @@ def mouse_global_var(button, pos):
         else:
             inventory_open = True
 
+    if game_started and not autoscroll:
+        inventory_player.mouse(button, pos)
+
         
 
     #update
@@ -48,17 +80,106 @@ def update_global_var():
     global autoscroll
     global game_started
     global game_lost
+    global scene
+    global time
+    global night
+    global darkness
+    global game_start
+    global duration_day
+    global all_ingredients
+    global inventory_player
     
     absolutey += scroll_y
 
+    if game_started:
+        if time < duration_day and not night:
+            time += 1
+            if 255 - time >= 0:
+                darkness = 255 - time
+        elif time > 0 and night:
+            time -= 1
+            if  duration_day - time <= 255:
+                darkness = duration_day - time
+        elif not night:
+                wave.next_wave()
+                night = True
+        elif wave.ended() and night:
+                night = False
+        #wave.update()
+    
     if not autoscroll or not (HEIGHT < absolutey < 1680):
        scroll_y = 0
        autoscroll = False
-    
+
     if game_lost:
         print("Verloren")
-        game_started = False
-        game_lost = False
+        game_setback()
+    
+    if game_started and game_start:
+        game_start = False        
+
+        seed = random.randint(0,255)        
+        random.seed(seed)
+                
+        all_ingredients = {
+            'leaf': Item('leaf', 'ingredient', 50, 'items/leaf', 'fire'),
+            'cherry': Item('cherry', 'ingredient', 100, 'items/cherry', 'pulse'),
+            'dead_worm': Item('dead_worm', 'ingredient', 0, 'monster/worm_dead', 'slow')
+            }               
+                
+        
+        print(all_ingredients['leaf'].effects)
+        print(all_ingredients['cherry'].effects)
+        print(all_ingredients['dead_worm'].effects)
+        inventory_player.add_item(0, 0, all_ingredients['dead_worm'])
+        inventory_player.add_item(1, 0, all_ingredients['leaf'])        
+        inventory_player.add_item(2, 0, all_ingredients['cherry'])        
+        inventory_player.add_item(0, 1, all_ingredients['dead_worm'])
+        inventory_player.add_item(1, 1, all_ingredients['leaf'])        
+        inventory_player.add_item(2, 1, all_ingredients['cherry'])
+
+
+
+
+def draw(screen):        
+    global game_started
+    global wave
+    
+    if game_started:
+        wave.draw()
+        inventory_player.draw(screen)
+
+def game_setback():
+    global scroll_y
+    global autoscroll
+    global game_started
+    global game_lost
+    global scene
+    global time
+    global night
+    global inventory_open
+    global inventory_pos_selected
+    global inventory_selected
+    global wave
+    global darkness
+    global game_start
+    global seed
+
+    darkness = 0
+    scene = 1
+    autoscroll = True
+    scroll_y = -10
+    game_started = False
+    game_lost = False     
+    wave.wave = 1
+    time = duration_day
+    night = False
+    inventory_open = False
+    inventory_pos_selected = None
+    inventory_selected = None
+    seed = None
+    game_start = False
+
     
 
 #button ==

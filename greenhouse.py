@@ -5,7 +5,7 @@ from patches import Patch
 patches = []
 
 #Actors
-background = Actor('greenhouse_background', center = (global_var.WIDTH//2, global_var.HEIGHT//2))
+background = Actor('greenhouse/greenhouse_background', center = (global_var.WIDTH//2, global_var.HEIGHT//2))
 button_leave = Actor('startknopf', bottomleft = (20, 910), anchor = ('center', 'center'))
 
 for i in range(4):

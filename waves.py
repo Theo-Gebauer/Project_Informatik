@@ -1,30 +1,31 @@
 from monster import Monster
 import global_var
-
+from items import Item
 
 class WaveManager:
 
     def __init__(self):
-        self.wave = 1
+        self.wave = 0
 
         self.monsters = []
 
-        self.monsters_to_spawn = 5
+        self.monsters_to_spawn = 0
 
-        self.spawn_timer = 0
         self.spawn_delay = 60
 
     def update(self):
-        self.spawn_timer += 1
+        self.spawn_delay -= 1
 
         #spawning
         if self.monsters_to_spawn > 0:
 
-            if self.spawn_timer >= self.spawn_delay:
+            if self.spawn_delay < 0:
                 hp = 50 + self.wave * 20
-                speed = self.wave * 1.5
+                speed = self.wave * 1.1
 
-                monster = Monster("worm", hp, speed, global_var.absolutex, global_var.absolutey - 50, 'worm', [ 
+                dead_worm = global_var.all_ingredients['dead_worm']
+
+                monster = Monster("worm", hp, speed, global_var.absolutex - 200, global_var.absolutey - 30, 'monster/worm', dead_worm,[ 
                     (740, 890), (830, 730),
                     (615, 730), (500, 590),
                     (740, 590), (830, 450),
@@ -38,21 +39,12 @@ class WaveManager:
                 self.monsters.append(monster)
 
                 self.monsters_to_spawn -= 1
-                self.spawn_timer = 0
+                self.spawn_delay = 90
 
         #moving monsters
         for monster in self.monsters:
             monster.move()
 
-            '''if monster.actor.x > global_var.absolutex + 720 and monster.layer % 2 == 0:
-                monster.move(3,-3)
-            elif monster.actor.x < global_var.absolutex + 610 and monster.layer % 2 == 1:
-                monster.move(-3,-3)
-            elif monster.layer % 2 == 0:
-                monster.move(3,0)
-            else:
-                monster.move(-3,0)
-'''
         #removing dead monsters
         self.monsters = [
             monster 
@@ -60,15 +52,14 @@ class WaveManager:
             if not monster.is_dead()
         ]
 
-        # Neue Welle
-        if (self.monsters_to_spawn <= 0 and len(self.monsters) == 0):
-            self.next_wave()
-            print("new Wave")
-
     def next_wave(self):
         self.wave += 1
-        self.monsters_to_spawn = 5 + self.wave * 3
+        self.monsters_to_spawn = self.wave * 3
 
     def draw(self):
-        for monster in self.monsters:
-            monster.draw()
+        if global_var.scene == 1:
+            for monster in self.monsters:
+                monster.draw()
+
+    def ended(self):
+        return len(self.monsters) == 0 and self.monsters_to_spawn == 0

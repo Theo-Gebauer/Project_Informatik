@@ -9,7 +9,7 @@ import math
 
 #Classes
 class Monster():
-    def __init__(self, image, hp, speed, x, y, type, waypoints):
+    def __init__(self, image, hp, speed, x, y, type, loot, waypoints):
         self.hp = hp
         self.speed = speed
         self.type = type
@@ -17,6 +17,7 @@ class Monster():
         self.type = type
         self.waypoints = waypoints
         self.next_waypoint = 0
+        self.loot = loot
 
         self.actor = Actor(image)
         self.actor.pos = (x,y)
