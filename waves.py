@@ -1,6 +1,5 @@
 from monster import Monster
 import global_var
-from items import Item
 
 class WaveManager:
 
@@ -21,7 +20,7 @@ class WaveManager:
 
             if self.spawn_delay < 0:
                 hp = 50 + self.wave * 20
-                speed = self.wave * 1.1
+                speed = self.wave * 0.1 + 1
 
                 dead_worm = global_var.all_ingredients['dead_worm']
 

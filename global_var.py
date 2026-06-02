@@ -2,6 +2,7 @@ from waves import WaveManager
 import random
 from items import Item
 from inventory import Inventory
+from layers import Layer
 
 WIDTH = 1420
 HEIGHT = 930 
@@ -17,7 +18,7 @@ game_started = False
 game_start = False
 game_lost = False
 time = 0
-duration_day = 1000
+duration_day = 100
 night = False
 inventory_player = Inventory(5, 5, 42, 112)
 inventory_open = False
@@ -40,6 +41,11 @@ effect_to_color = {
     'slow': (100, 100, 100),
     'pulse': (255, 0, 255)
 }
+pulse = False
+
+layers = []
+for i in range(8):
+    layers.append(Layer(i))
 
 #Methods
     #Method for testing if Button is pressed
@@ -56,6 +62,7 @@ def mouse_global_var(button, pos):
     global inventory_player
     global game_started
     global autoscroll
+    global layers
 
     if button == 4 and absolutey < 1680 and scene == 1:
         scroll_y = 30
@@ -70,6 +77,9 @@ def mouse_global_var(button, pos):
 
     if game_started and not autoscroll:
         inventory_player.mouse(button, pos)
+        if scene == 1:
+            for layer in layers:
+                layer.mouse(button, pos)
 
         
 
@@ -88,8 +98,29 @@ def update_global_var():
     global duration_day
     global all_ingredients
     global inventory_player
+    global layers
     
     absolutey += scroll_y
+
+    
+    if game_started and game_start:
+        game_start = False        
+
+        seed = random.randint(0,255)        
+        random.seed(seed)
+                
+        all_ingredients = {
+            'leaf': Item('leaf', 'ingredient', 50, 'items/leaf', 'fire'),
+            'cherry': Item('cherry', 'ingredient', 100, 'items/cherry', 'pulse'),
+            'dead_worm': Item('dead_worm', 'ingredient', 0, 'monster/worm_dead', 'slow')
+            }
+
+        inventory_player.add_item(0, 0, all_ingredients['dead_worm'])
+        inventory_player.add_item(1, 0, all_ingredients['leaf'])        
+        inventory_player.add_item(2, 0, all_ingredients['cherry'])        
+        inventory_player.add_item(0, 1, all_ingredients['dead_worm'])
+        inventory_player.add_item(1, 1, all_ingredients['leaf'])        
+        inventory_player.add_item(2, 1, all_ingredients['cherry'])
 
     if game_started:
         if time < duration_day and not night:
@@ -105,7 +136,12 @@ def update_global_var():
                 night = True
         elif wave.ended() and night:
                 night = False
-        #wave.update()
+        wave.update()
+
+        inventory_player.update()
+    
+    for layer in layers:
+        layer.update()
     
     if not autoscroll or not (HEIGHT < absolutey < 1680):
        scroll_y = 0
@@ -114,40 +150,19 @@ def update_global_var():
     if game_lost:
         print("Verloren")
         game_setback()
-    
-    if game_started and game_start:
-        game_start = False        
+                   
 
-        seed = random.randint(0,255)        
-        random.seed(seed)
-                
-        all_ingredients = {
-            'leaf': Item('leaf', 'ingredient', 50, 'items/leaf', 'fire'),
-            'cherry': Item('cherry', 'ingredient', 100, 'items/cherry', 'pulse'),
-            'dead_worm': Item('dead_worm', 'ingredient', 0, 'monster/worm_dead', 'slow')
-            }               
-                
-        
-        print(all_ingredients['leaf'].effects)
-        print(all_ingredients['cherry'].effects)
-        print(all_ingredients['dead_worm'].effects)
-        inventory_player.add_item(0, 0, all_ingredients['dead_worm'])
-        inventory_player.add_item(1, 0, all_ingredients['leaf'])        
-        inventory_player.add_item(2, 0, all_ingredients['cherry'])        
-        inventory_player.add_item(0, 1, all_ingredients['dead_worm'])
-        inventory_player.add_item(1, 1, all_ingredients['leaf'])        
-        inventory_player.add_item(2, 1, all_ingredients['cherry'])
-
-
-
-
-def draw(screen):        
+def draw_global_var(screen):        
     global game_started
     global wave
+    global layers
     
     if game_started:
-        wave.draw()
         inventory_player.draw(screen)
+        if scene == 1:
+            for layer in layers:
+                layer.draw(screen)
+        wave.draw()
 
 def game_setback():
     global scroll_y

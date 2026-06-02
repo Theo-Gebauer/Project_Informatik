@@ -56,6 +56,12 @@ class Inventory:
                         break
                 if found:
                     break
+
+    def update(self):
+        for i in range(len(self.item_slot)):
+            for j in range(len(self.item_slot[i])):
+                if not self.item_slot[i][j] == 0:
+                    self.item_slot[i][j].update()
             
     def draw(self, screen):
         if global_var.inventory_open:
@@ -64,10 +70,3 @@ class Inventory:
                     self.inventory_background[i][j].draw()
                     if self.item_slot[i][j] != 0:
                         self.item_slot[i][j].draw(self.inventory_background[i][j].x, self.inventory_background[i][j].y, screen)
-
-
-                        '''global_var.button_pressed(pos,
-                                     len(self.inventory_background) * 33 + self.inventory_background[0][0].x - 32,
-                                     len(self.inventory_background[0]) * 33 + self.inventory_background[0][0].y - 32, 
-                                     len(self.inventory_background) * 33, 
-                                     len(self.inventory_background[0]) * 33) and button == 1 and global_var.inventory_open:'''

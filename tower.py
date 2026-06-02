@@ -24,9 +24,6 @@ for i in range(4):
     clouds[i].vx = i+1
 
 
-layers = []
-for i in range(8):
-    layers.append(Layer(i))
 
 
 #Methods
@@ -36,9 +33,6 @@ def mouse_tower(button,pos):
         global_var.scene = 2
     elif button == 1 and global_var.button_pressed(pos, 665, -1230 + global_var.absolutey, 180, 100):
         global_var.scene = 3
-    else:
-        for layer in layers:
-            layer.mouse(button, pos)
 
     #update
 def update_tower():
@@ -59,9 +53,6 @@ def update_tower():
         duration_day -= 1
     else:
         duration_day = 3600
-
-    for layer in layers:
-        layer.update()
      
     #draw
 def draw_tower(screen):
@@ -75,6 +66,3 @@ def draw_tower(screen):
     tower.draw()
     for i in range(0,2):
         clouds[i].draw()
-
-    for layer in layers:
-        layer.draw(screen)

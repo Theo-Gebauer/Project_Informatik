@@ -15,6 +15,7 @@ inventory_button = Actor('inventory_button', topleft = (10, 10))
 
 
 def on_mouse_down(button, pos):
+    print(pos)
     menu.mouse_menu(button, pos)
     if global_var.game_started and not global_var.autoscroll:
 
@@ -26,13 +27,10 @@ def on_mouse_down(button, pos):
             alchemy.mouse_alchemy(button, pos)
 
         global_var.mouse_global_var(button, pos)
-    #print(pos)
-    #print(global_var.absolutey)
 
 def update():
     tower.update_tower()
     menu.update_menu()
-
     if global_var.game_started:
         greenhouse.update_greenhouse()
 
@@ -50,6 +48,6 @@ def draw():
     if global_var.game_started:
         inventory_button.draw()
     menu.draw_menu()
-    global_var.draw(screen)
+    global_var.draw_global_var(screen)
 
 pgzrun.go()
