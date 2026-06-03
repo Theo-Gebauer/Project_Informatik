@@ -14,6 +14,7 @@ class Layer:
         self.pulse = False
         self.animation = Actor('animations/nothing', midbottom = (global_var.WIDTH // 2 - 40, global_var.absolutey - self.layer * 137 - 105))
 
+        self.frame = 0
         self.frames = {
             'fire': [
                 "animations/fire_1",
@@ -35,7 +36,7 @@ class Layer:
 
                 if not self.potion_used:
                     for effect, value in self.potion_slot.item_slot[0][0].effects.items():
-                        self.effect_duration = value*100 + 200
+                        self.effect_duration = value * 100 + 200
                         self.effect[effect] = self.potion_slot.item_slot[0][0].effects[effect]
                         if effect == 'pulse':
                             self.pulse = True
@@ -63,8 +64,11 @@ class Layer:
             self.effect = {}
 
     def animate(self):
-        if self.effect_timer % 9 == 0:
-            self.animation.image = self.frames['fire'][random.randint(0,6)]
+        if self.effect_timer % 10 == 0:
+            self.frame += 1
+            if self.frame  % len(self.frames['fire']) == 0:
+                self.frame = 0
+        self.animation.image = self.frames['fire'][self.frame]
 
 
 

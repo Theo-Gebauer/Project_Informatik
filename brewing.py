@@ -12,7 +12,7 @@ class Brew_potions():
         self.button_actor = Actor('alchemy/brew_button', center = (x, y + 200), anchor = ('center', 'center'))
 
     def mouse(self, button, pos):
-        if button == 1 and global_var.button_pressed(pos, self.button_actor.x, self.button_actor.y, 140, 40) and (not self.ingredients_slot.empty(0, 0) or not self.ingredients_slot.empty(0, 1)):
+        if button == 1 and global_var.button_pressed(pos, self.button_actor.x, self.button_actor.y, 165, 46) and (not self.ingredients_slot.empty(0, 0) or not self.ingredients_slot.empty(0, 1)):
             
             possible_effects = {}
             for effect in global_var.all_effects:

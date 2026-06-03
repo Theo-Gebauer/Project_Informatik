@@ -3,6 +3,7 @@ import random
 from items import Item
 from inventory import Inventory
 from layers import Layer
+from trader import Trader
 
 WIDTH = 1420
 HEIGHT = 930 
@@ -13,18 +14,26 @@ absolutex = 0
 absolutey = 930
 
 scene = 1
+
+trader = None
+trade_allowed = False
+
 wave = WaveManager()
+
 game_started = False
 game_start = False
 game_lost = False
+
 time = 0
-duration_day = 100
+duration_day = 10000
 night = False
+darkness = 0
+
 inventory_player = Inventory(5, 5, 42, 112)
 inventory_open = False
 inventory_pos_selected = None
 inventory_selected = None
-darkness = 0
+
 seed = None
 all_ingredients = {}
 all_effects = [
@@ -77,6 +86,7 @@ def mouse_global_var(button, pos):
 
     if game_started and not autoscroll:
         inventory_player.mouse(button, pos)
+        trader.mouse(button, pos)
         if scene == 1:
             for layer in layers:
                 layer.mouse(button, pos)
@@ -99,6 +109,7 @@ def update_global_var():
     global all_ingredients
     global inventory_player
     global layers
+    global trader
     
     absolutey += scroll_y
 
@@ -121,8 +132,13 @@ def update_global_var():
         inventory_player.add_item(0, 1, all_ingredients['dead_worm'])
         inventory_player.add_item(1, 1, all_ingredients['leaf'])        
         inventory_player.add_item(2, 1, all_ingredients['cherry'])
+        inventory_player.add_item_on_empty(Item('Debug Kill', 'potion', 0, None, {'fire':100}))
+
+        trader = Trader()
 
     if game_started:
+        trader.update()
+
         if time < duration_day and not night:
             time += 1
             if 255 - time >= 0:
@@ -156,9 +172,11 @@ def draw_global_var(screen):
     global game_started
     global wave
     global layers
+    global trader
     
     if game_started:
         inventory_player.draw(screen)
+        trader.draw(screen)
         if scene == 1:
             for layer in layers:
                 layer.draw(screen)
@@ -179,7 +197,10 @@ def game_setback():
     global darkness
     global game_start
     global seed
+    global trade_allowed
 
+
+    trade_allowed = False
     darkness = 0
     scene = 1
     autoscroll = True

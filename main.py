@@ -15,7 +15,7 @@ inventory_button = Actor('inventory_button', topleft = (10, 10))
 
 
 def on_mouse_down(button, pos):
-    #print(pos)
+    print(pos)
     menu.mouse_menu(button, pos)
     if global_var.game_started and not global_var.autoscroll:
 

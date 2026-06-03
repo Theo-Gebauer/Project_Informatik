@@ -15,7 +15,7 @@ class Inventory:
             self.item_slot.append([])
             for j in range(rows):
                 self.inventory_background[i].append(Actor('panel_brown', center = (x + i*65, y + j*65), anchor = ('center', 'center')))
-                self.item_slot[i].append(0)
+                self.item_slot[i].append(None)
 
     def add_item(self, colum, row, item):
         self.item_slot[colum][row] = item
@@ -24,7 +24,7 @@ class Inventory:
         added = False
         for i in range(len(self.item_slot)):
             for j in range(len(self.item_slot[i])):
-                if self.item_slot[i][j] == 0:
+                if self.item_slot[i][j] is None:
                     self.item_slot[i][j] = item
                     print(f'{i} | {j}')
                     print(item.name)
@@ -38,13 +38,18 @@ class Inventory:
 
         
     def del_item(self, colum, row):
-        self.item_slot[colum][row] = 0
+        self.item_slot[colum][row] = None
+
+    def del_all(self):
+        for i in range(len(self.item_slot)):
+            for j in range(len(self.item_slot[i])):
+                self.item_slot[i][j] = None
 
     def empty(self, colum, row):
-        return self.item_slot[colum][row] == 0
+        return self.item_slot[colum][row] is None
     
     def add_inv(self, x, y):
-        self.item_slot[0].append(0)
+        self.item_slot[0].append(None)
         self.inventory_background[0].append(Actor('panel_brown', center = (x, y), anchor = ('center', 'center')))
 
     def move(self, dx, dy):
@@ -53,15 +58,45 @@ class Inventory:
                 self.inventory_background[i][j].x += dx
                 self.inventory_background[i][j].y += dy
 
+    def get_value(self):
+        value = 0
+        for i in range(len(self.item_slot)):
+            for j in range(len(self.item_slot[i])):
+                if self.item_slot[i][j] is not None:
+                    value += self.item_slot[i][j].value
+        return value
+
+    def trade(self, button, pos, value1):
+        global_var.trade_allowed = False
+        selected_item = None
+        if button == 1 and global_var.inventory_open:
+            found = False
+            for i in range(len(self.item_slot)):
+                for j in range(len(self.item_slot[i])):
+                    self.inventory_background[i][j].image = 'panel_brown'
+                    if global_var.button_pressed(pos, self.inventory_background[i][j].x, self.inventory_background[i][j].y, 32, 32):
+                        if global_var.inventory_selected is not None:
+                            global_var.inventory_selected.inventory_background[global_var.inventory_pos_selected[0]][global_var.inventory_pos_selected[1]].image = 'panel_brown'
+                        if self.item_slot[i][j] is not None:
+                            self.inventory_background[i][j].image = 'panel_brown_selected'
+                            selected_item = self.item_slot[i][j]
+                            if self.item_slot[i][j].value * 2 <= value1:
+                                global_var.trade_allowed = True
+        return selected_item
+
+
+
     def mouse(self, button, pos):
         if button == 1 and global_var.inventory_open:
             found = False
             for i in range(len(self.item_slot)):
                 for j in range(len(self.item_slot[i])):
                     if global_var.button_pressed(pos, self.inventory_background[i][j].x, self.inventory_background[i][j].y, 32, 32):
-                        if global_var.inventory_pos_selected is not None:
+                        if global_var.inventory_selected is not None:
                             global_var.inventory_selected.inventory_background[global_var.inventory_pos_selected[0]][global_var.inventory_pos_selected[1]].image = 'panel_brown'
                             
+                            print('tauschen')
+
                             item_temp = self.item_slot[i][j]
                             self.add_item(i, j, global_var.inventory_selected.item_slot[global_var.inventory_pos_selected[0]][global_var.inventory_pos_selected[1]])
                             global_var.inventory_selected.add_item(global_var.inventory_pos_selected[0], global_var.inventory_pos_selected[1], item_temp)
@@ -80,7 +115,7 @@ class Inventory:
     def update(self):
         for i in range(len(self.item_slot)):
             for j in range(len(self.item_slot[i])):
-                if not self.item_slot[i][j] == 0:                    
+                if self.item_slot[i][j]is not None:                    
                     mouse_pos = pygame.mouse.get_pos()
 
                     if self.inventory_background[i][j].collidepoint(mouse_pos):
@@ -92,7 +127,7 @@ class Inventory:
             for i in range(len(self.item_slot)):
                 for j in range(len(self.item_slot[i])):
                     self.inventory_background[i][j].draw()
-                    if self.item_slot[i][j] != 0:
+                    if self.item_slot[i][j] is not None:
                         self.item_slot[i][j].draw(self.inventory_background[i][j].x, self.inventory_background[i][j].y, screen)
             
             if self.hovered_item is not None:

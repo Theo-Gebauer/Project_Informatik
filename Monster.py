@@ -87,16 +87,16 @@ class Monster():
             if effect_name == 'poison':
                 self.effects[effect_name]['duration'] = strength * 200
                 self.effects[effect_name]['dmg'] = strength * 0.02
-                self.effects[effect_name]['timer_apply'] =  100 // strength
+                self.effects[effect_name]['timer_apply'] =  100 // strength + 1
             elif effect_name == 'fire':
                 self.effects[effect_name]['duration'] = strength * 20
                 self.effects[effect_name]['dmg'] = strength * 0.1 + 1
-                self.effects[effect_name]['timer_apply'] =  100 // strength
+                self.effects[effect_name]['timer_apply'] =  100 // strength + 1
                 self.effects['ice']['duration'] = 0
             elif effect_name == 'ice':
                 self.effects[effect_name]['duration'] = strength * 20
                 self.effects[effect_name]['dmg'] = strength * 0.05
-                self.effects[effect_name]['timer_apply'] =  100 // strength
+                self.effects[effect_name]['timer_apply'] =  100 // strength + 1
                 self.effects[effect_name]['speed_decrease'] = strength * 0.02
                 self.effects['fire']['duration'] = 0
                 self.effects['slow']['duration'] = strength * 10

@@ -6,19 +6,20 @@ import pygame
 
 class Item():
     def __init__(self, name, type, delay, image, standart_effect):
-        self.value = 1
+        self.value = 0
         self.discovered_effects = {}
 
         if type == 'ingredient':
-            effects = self.generate_effects(standart_effect)
-            self.effects = effects
+            self.effects = self.generate_effects(standart_effect)
             self.name = name
             self.type = type
             self.delay = delay
 
             self.actor = Actor(image)
+            for effect, value in self.effects.items():
+                self.value += value
 
-        elif type == 'potion':
+        if type == 'potion':
             self.vis_height = 28
             self.name = name
             self.type = type
@@ -31,10 +32,8 @@ class Item():
                 self.discovered_effects[effect] = value
                 color = global_var.effect_to_color.get(effect, (200, 200, 200))
                 self.liquid.fill(color, special_flags=pygame.BLEND_MULT)
-            self.value = 2
+                self.value = value * 2
 
-        for effect, value in self.effects.items():
-            self.value *= value
 
     def generate_effects(self, standart_effect):    
 
