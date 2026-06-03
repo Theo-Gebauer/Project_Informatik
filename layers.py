@@ -12,14 +12,17 @@ class Layer:
         self.potion_slot = Inventory(1, 1, 420, global_var.absolutey - self.layer * 140 - 110)
         self.potion_used = False
         self.pulse = False
-        self.animation = Actor('animations/nothing', midbottom = (global_var.WIDTH // 2 - 40, global_var.absolutey - self.layer * 137 - 155))
+        self.animation = Actor('animations/nothing', midbottom = (global_var.WIDTH // 2 - 40, global_var.absolutey - self.layer * 137 - 105))
 
         self.frames = {
             'fire': [
                 "animations/fire_1",
                 "animations/fire_2",
                 "animations/fire_3",
-                "animations/fire_4"
+                "animations/fire_4",
+                "animations/fire_5",
+                "animations/fire_6",
+                "animations/fire_7"
             ]
         }
         
@@ -60,8 +63,8 @@ class Layer:
             self.effect = {}
 
     def animate(self):
-        if self.effect_timer % 10 == 0:
-            self.animation.image = self.frames['fire'][random.randint(0,3)]
+        if self.effect_timer % 9 == 0:
+            self.animation.image = self.frames['fire'][random.randint(0,6)]
 
 
 

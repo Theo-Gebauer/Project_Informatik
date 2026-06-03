@@ -109,13 +109,10 @@ class Monster():
 
     def effect_apply(self):
         for effect_name, properties in self.effects.items():
-            print(f'{effect_name} | {properties}')
             if properties['duration'] > properties['timer']:
                 properties['timer'] += 1
                 if properties['timer'] % properties['timer_apply'] == 0:
-                    print(f'{self.hp}|')
                     self.dmg(properties['dmg'])
-                    print(self.hp)
             else:
                 properties['duration'] = 0
                 properties['timer'] = 0
@@ -128,6 +125,9 @@ class Monster():
 
     def dmg(self, dmg):
         self.hp -= dmg
+        if self.is_dead():
+            global_var.inventory_player.add_item_on_empty(self.loot)
+            print(f'geadded {self.loot.name}')
 
     def is_dead(self):
         return self.hp <= 0

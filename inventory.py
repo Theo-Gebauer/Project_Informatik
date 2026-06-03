@@ -1,11 +1,14 @@
 from pgzero.actor import Actor
 import global_var
 from items import Item
+import pygame
+from pgzero.builtins import Rect
 
 class Inventory:
     def __init__(self, columns, rows, x, y):
         self.inventory_background = []
         self.item_slot = []
+        self.hovered_item = None
 
         for i in range(columns):
             self.inventory_background.append([])
@@ -16,6 +19,23 @@ class Inventory:
 
     def add_item(self, colum, row, item):
         self.item_slot[colum][row] = item
+
+    def add_item_on_empty(self, item):
+        added = False
+        for i in range(len(self.item_slot)):
+            for j in range(len(self.item_slot[i])):
+                if self.item_slot[i][j] == 0:
+                    self.item_slot[i][j] = item
+                    print(f'{i} | {j}')
+                    print(item.name)
+                    added = True
+                    break
+            if added:
+                break
+
+        if not added:
+            pass
+
         
     def del_item(self, colum, row):
         self.item_slot[colum][row] = 0
@@ -60,8 +80,12 @@ class Inventory:
     def update(self):
         for i in range(len(self.item_slot)):
             for j in range(len(self.item_slot[i])):
-                if not self.item_slot[i][j] == 0:
-                    self.item_slot[i][j].update()
+                if not self.item_slot[i][j] == 0:                    
+                    mouse_pos = pygame.mouse.get_pos()
+
+                    if self.inventory_background[i][j].collidepoint(mouse_pos):
+                        self.hovered_item = self.item_slot[i][j]
+
             
     def draw(self, screen):
         if global_var.inventory_open:
@@ -70,3 +94,40 @@ class Inventory:
                     self.inventory_background[i][j].draw()
                     if self.item_slot[i][j] != 0:
                         self.item_slot[i][j].draw(self.inventory_background[i][j].x, self.inventory_background[i][j].y, screen)
+            
+            if self.hovered_item is not None:
+                mouse_x, mouse_y = pygame.mouse.get_pos()
+
+                i = 0            
+                for prop, value in self.hovered_item.effects.items():
+                    i += 1 
+
+                screen.draw.filled_rect(
+                    Rect(mouse_x - 120, mouse_y  - i * 20 - 5, 120, i * 20 + 25),
+                    (30, 30, 30)
+                )
+
+                screen.draw.text(
+                    self.hovered_item.name,
+                    (mouse_x - 115, mouse_y - i * 20),
+                    color="white"
+                )
+                
+                y_offset = 20
+                for effect_name, value in self.hovered_item.effects.items():
+                    if effect_name in self.hovered_item.discovered_effects:
+                        screen.draw.text(
+                            f"{effect_name}: {value}",
+                            (mouse_x - 115, mouse_y - i * 20 + y_offset),
+                            color="white"
+                        )
+                    else:
+                        screen.draw.text(
+                            "- Unbekannt -",
+                            (mouse_x - 115, mouse_y - i * 20 + y_offset),
+                            color="white"
+                        )
+
+                    y_offset += 20
+                
+                self.hovered_item = None

@@ -39,6 +39,7 @@ class Brew_potions():
                         self.ingredients_slot.mouse(1, (self.ingredients_slot.inventory_background[0][i].x, self.ingredients_slot.inventory_background[0][i].y))                
                     if not self.ingredients_slot.empty(0, i):
                         if self.ingredients_slot.item_slot[0][i].type == 'ingredient':
+                            self.ingredients_slot.item_slot[0][i].discovered_effects[max_value] = possible_effects[max_value]
                             self.ingredients_slot.del_item(0, i)
 
         elif self.potion_slot.empty(0, 0):
