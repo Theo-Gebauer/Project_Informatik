@@ -30,7 +30,7 @@ class Brew_potions():
             if possible_effects[max_value] > 0:
                 resulting_effect = {}
                 resulting_effect[max_value] = possible_effects[max_value]
-                self.potion_slot.item_slot[0][0] = Item('potion', 'potion', 0, None, resulting_effect)
+                self.potion_slot.item_slot[0][0] = Item('Trank', 'potion', 0, None, resulting_effect)
 
                 for i in range(len(self.ingredients_slot.item_slot[0])):
                     if self.ingredients_slot == global_var.inventory_selected:
@@ -44,6 +44,10 @@ class Brew_potions():
             self.ingredients_slot.mouse(button, pos)
         else:
             self.potion_slot.mouse(button, pos)
+
+    def update(self):
+        self.potion_slot.update()
+        self.ingredients_slot.update()
                 
 
     def draw(self, screen):

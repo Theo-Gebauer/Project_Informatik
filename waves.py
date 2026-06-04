@@ -28,7 +28,6 @@ class WaveManager:
 
             if self.difficulty > 0:
                 difficulty_monster = random.randint(0, self.difficulty) % (len(global_var.all_monsters) - 1)
-                print(f'{self.difficulty} - {difficulty_monster}')
 
                 properties_monster = global_var.all_monsters[difficulty_monster]
 

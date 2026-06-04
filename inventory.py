@@ -127,10 +127,7 @@ class Inventory:
             
             if self.hovered_item is not None:
                 mouse_x, mouse_y = pygame.mouse.get_pos()
-
-                i = 0            
-                for prop, value in self.hovered_item.effects.items():
-                    i += 1 
+                i = len(self.hovered_item.effects)
 
                 screen.draw.filled_rect(
                     Rect(mouse_x - 135, mouse_y  - i * 20 - 5, 135, i * 20 + 25),
@@ -147,7 +144,7 @@ class Inventory:
                 for effect_name, value in self.hovered_item.effects.items():
                     if effect_name in self.hovered_item.discovered_effects:
                         screen.draw.text(
-                            f"{effect_name}: {value}",
+                            f"{global_var.translation[effect_name]}: {value}",
                             (mouse_x - 130, mouse_y - i * 20 + y_offset),
                             color="white"
                         )

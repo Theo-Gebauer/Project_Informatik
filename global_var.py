@@ -1,5 +1,8 @@
-from waves import WaveManager
 import random
+from pgzero.actor import Actor
+import pygame
+
+from waves import WaveManager
 from items import Item
 from inventory import Inventory
 from layers import Layer
@@ -15,6 +18,9 @@ autoscroll = False
 absolutex = 0
 absolutey = 930
 
+clock = Actor('clock', center = (WIDTH // 2, 150), anchor = ('center', 'center'))
+clock_arrow = pygame.image.load('images/clock_arrow.png').convert_alpha()
+
 scene = 1
 
 trader = None
@@ -28,16 +34,23 @@ game_start = False
 game_lost = False
 
 time = 0
-duration_day = 2000
+duration_day = 4000
 night = False
 darkness = 255
 
-inventory_player = None
 inventory_open = False
 inventory_pos_selected = None
 inventory_selected = None
+
+
 patches = []
-potions = None
+for i in range(4):
+    patches.append(Patch(300 + i*250, 785))
+potions = Brew_potions(700, 450)
+inventory_player = Inventory(5, 5, 42, 112)
+layers = []
+for i in range(8):
+    layers.append(Layer(i))
 
 seed = None
 all_ingredients = {}
@@ -49,17 +62,21 @@ all_effects = [
         'pulse'
 ]
 effect_to_color = {
-    'poison': (120, 0, 120),
+    'poison': (60, 255, 20),
     'fire': (255, 80, 0),
     'ice': (0, 150, 255),
     'slow': (100, 100, 100),
-    'pulse': (255, 0, 255)
+    'pulse': (120, 0, 120)
 }
 pulse = False
 
-layers = []
-for i in range(8):
-    layers.append(Layer(i))
+translation = {
+    'poison': 'Gift',
+    'fire': 'Feuer',
+    'ice': 'Eis',
+    'slow': 'Langsam',
+    'pulse': 'Pulsieren'
+}
 
 #Methods
     #Method for testing if Button is pressed
@@ -178,22 +195,23 @@ def update_global_var():
                      }
         ]
 
-        
-        for i in range(4):
-            patches.append(Patch(300 + i*250, 785))
-        potions = Brew_potions(660, 450)
-
         wave = WaveManager()
         trader = Trader()
-        inventory_player = Inventory(5, 5, 42, 112)
 
-        inventory_player.add_item(1, 0, all_ingredients['leaf'])        
-        inventory_player.add_item_on_empty(Item('Debug Feuer', 'potion', 0, None, {'fire':100}))
-        inventory_player.add_item_on_empty(Item('Debug Pulse', 'potion', 0, None, {'pulse':100}))
+        inventory_player.add_item(2, 2, all_ingredients['leaf'])        
+        inventory_player.add_item_on_empty(Item('Debug Feuer', 'potion', 0, None, {'fire':10}))
+        inventory_player.add_item_on_empty(Item('Debug Pulse', 'potion', 0, None, {'pulse':20}))
+        inventory_player.add_item_on_empty(Item('Debug Pulse', 'potion', 0, None, {'pulse':20}))
+        inventory_player.add_item_on_empty(Item('Debug Pulse', 'potion', 0, None, {'pulse':20}))
+        inventory_player.add_item_on_empty(Item('Debug Pulse', 'potion', 0, None, {'slow':10}))
+        inventory_player.add_item_on_empty(Item('Debug Pulse', 'potion', 0, None, {'poison':10}))
+        inventory_player.add_item_on_empty(Item('Debug Pulse', 'potion', 0, None, {'ice':10}))
 
     if game_started:
         if scene == 1:
             trader.update()
+            for layer in layers:
+                layer.update()
 
         if time < duration_day and not night:
             time += 1
@@ -211,16 +229,13 @@ def update_global_var():
 
         wave.update()
         inventory_player.update()
-    
-        for layer in layers:
-            layer.update()
+        potions.update()
     
     if not autoscroll or not (HEIGHT < absolutey < 1680):
        scroll_y = 0
        autoscroll = False
 
     if game_lost:
-        print("Verloren")
         game_setback()
                    
 
@@ -229,6 +244,10 @@ def draw_global_var(screen):
     global wave
     global layers
     global trader
+    global clock
+    global clock_arrow
+    global time
+    global duration_day
     
     if game_started:
         inventory_player.draw(screen)
@@ -237,6 +256,16 @@ def draw_global_var(screen):
             for layer in layers:
                 layer.draw(screen)
         wave.draw(screen)
+
+        clock.draw()
+        #rotating the arrow
+        if night:
+            rotated = pygame.transform.rotate(clock_arrow, 180 * abs(time)/duration_day)
+        else:
+            rotated = pygame.transform.rotate(clock_arrow, -180 * abs(time)/duration_day)
+        rect = rotated.get_rect(center = (clock.x, clock.y))
+        screen.surface.blit(rotated, rect.topleft)
+
 
 def game_setback():
     global scroll_y
@@ -257,12 +286,31 @@ def game_setback():
     global inventory_player
     global patches
     global potions
+    global trader
+    global layers
 
-    potions = None
-    inventory_player = None
-    patches = None
+    potions.potion_slot.del_all()
+    potions.ingredients_slot.del_all()
+
+    for patch in patches:
+        patch.seed_slot.del_all()
+        patch.harvest_slot.del_all()
+    
+    for layer in layers:        
+        layer.animation_effect = None
+        layer.potion_used = False
+        layer.effect_timer = 0
+        layer.effect_duration = 0
+        layer.potion_slot.del_item(0, 0)
+        layer.animation.image = 'animations/nothing'
+
+        
+    inventory_player.del_all()
+
+
+    trader = None
     trade_allowed = False
-    darkness = 0
+    darkness = 255
     scene = 1
     autoscroll = True
     scroll_y = -10

@@ -77,10 +77,12 @@ class Monster():
         else:
             global_var.game_lost = True
 
+        
+        self.effect_apply()
+
         if self.next_waypoint % 2 == 0 and self.actor.x >= 480:
             if not global_var.layers[self.next_waypoint // 2].effect == {}:
                 self.effect_layer(global_var.layers[self.next_waypoint // 2].effect)
-                self.effect_apply()
 
     def effect_layer(self, effect):
         for effect_name, strength in effect.items():
@@ -104,8 +106,9 @@ class Monster():
                 self.effects[effect_name]['duration'] = strength * 100
                 self.effects[effect_name]['speed_decrease'] = strength * 0.1
             elif effect_name == 'pulse':
+                print('help')
                 if global_var.pulse == True:
-                    self.dmg(strength * 2)
+                    self.dmg(strength)
 
     def effect_apply(self):
         for effect_name, properties in self.effects.items():

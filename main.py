@@ -11,7 +11,6 @@ HEIGHT = global_var.HEIGHT
 
 inventory_button = Actor('inventory_button', topleft = (10, 10))
 
-
 def on_mouse_down(button, pos):
     menu.mouse_menu(button, pos)
     if global_var.game_started and not global_var.autoscroll:
@@ -44,6 +43,7 @@ def draw():
 
     if global_var.game_started:
         inventory_button.draw()
+        
     menu.draw_menu()
     global_var.draw_global_var(screen)
 

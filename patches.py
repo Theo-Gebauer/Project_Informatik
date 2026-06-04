@@ -15,6 +15,9 @@ class Patch:
         self.actor = Actor('greenhouse/patch', center = (x, y), anchor = ('center', 'center'))
 
     def update(self):
+        self.seed_slot.update()
+        self.harvest_slot.update()
+
         if not self.growing_item == self.seed_slot.item_slot[0][0] and not self.seed_slot.empty(0, 0):
             self.growth = 0
             self.growth_delay = 0

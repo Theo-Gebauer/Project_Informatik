@@ -6,7 +6,7 @@ from inventory import Inventory
 class Trader:
     def __init__(self):
         self.actor = Actor('trader', bottomleft = (920, 950))
-        self.trade_button = Actor('startknopf', center = (1120, 350))
+        self.trade_button = Actor('trade_button', center = (1120, 350), anchor = ('center', 'center'))
 
         self.selling_items = Inventory(3, 3, 900, 502)
         self.buying_items = Inventory(4, 4, 1170, 470)
@@ -17,7 +17,7 @@ class Trader:
     def mouse(self, button, pos):
         self.selling_items.mouse(button, pos)
 
-        if global_var.trade_allowed and global_var.button_pressed(pos, 1120, 350, 130, 60) and global_var.inventory_open:
+        if global_var.trade_allowed and global_var.button_pressed(pos, self.trade_button.x, self.trade_button.y, 200, 100) and global_var.inventory_open and not global_var.night:
             self.selling_items.del_all()            
             global_var.trade_allowed = False
             self.selling_items.add_item(1, 1, self.selected_item)

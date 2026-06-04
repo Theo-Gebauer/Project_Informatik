@@ -2,7 +2,6 @@ from pgzero.actor import Actor
 import global_var
 import random
 import pygame
-from layers import Layer
 
 
 #vars

@@ -4,13 +4,13 @@ from patches import Patch
 
 #Actors
 background = Actor('greenhouse/greenhouse_background', center = (global_var.WIDTH//2, global_var.HEIGHT//2))
-button_leave = Actor('startknopf', bottomleft = (20, 910), anchor = ('center', 'center'))
+button_leave = Actor('button_back', bottomleft = (0, 980), anchor = ('center', 'center'))
 
 
 #Methods
     #action on mouse
 def mouse_greenhouse(button, pos):
-    if button == 1 and global_var.button_pressed(pos, button_leave.x, button_leave.y, 130, 60):
+    if button == 1 and global_var.button_pressed(pos, button_leave.x, button_leave.y, 100, 50):
         global_var.scene = 1
     else:
         for patch in global_var.patches:
