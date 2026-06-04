@@ -24,6 +24,15 @@ class Layer:
                 "animations/fire_5",
                 "animations/fire_6",
                 "animations/fire_7"
+            ],
+            'pulse': [
+                "animations/pulse_1",
+                "animations/pulse_2",
+                "animations/pulse_3",
+                "animations/pulse_4",
+                "animations/pulse_5",
+                "animations/pulse_6",
+                "animations/pulse_7"
             ]
         }
         
@@ -40,6 +49,8 @@ class Layer:
                         self.effect[effect] = self.potion_slot.item_slot[0][0].effects[effect]
                         if effect == 'pulse':
                             self.pulse = True
+                        else:
+                            self.pulse = False
 
                 if self.effect_timer < self.effect_duration:
                     global_var.pulse = False

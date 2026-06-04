@@ -4,18 +4,15 @@ import menu
 import tower
 import greenhouse
 import alchemy
-import inventory
 import greenhouse
-import items
 
-WIDTH = 1420
-HEIGHT = 930 
+WIDTH = global_var.WIDTH
+HEIGHT = global_var.HEIGHT 
 
 inventory_button = Actor('inventory_button', topleft = (10, 10))
 
 
 def on_mouse_down(button, pos):
-    print(pos)
     menu.mouse_menu(button, pos)
     if global_var.game_started and not global_var.autoscroll:
 

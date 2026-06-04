@@ -4,6 +4,8 @@ from items import Item
 from inventory import Inventory
 from layers import Layer
 from trader import Trader
+from patches import Patch
+from brewing import Brew_potions
 
 WIDTH = 1420
 HEIGHT = 930 
@@ -18,21 +20,24 @@ scene = 1
 trader = None
 trade_allowed = False
 
-wave = WaveManager()
+wave = None
+all_monsters = None
 
 game_started = False
 game_start = False
 game_lost = False
 
 time = 0
-duration_day = 10000
+duration_day = 2000
 night = False
-darkness = 0
+darkness = 255
 
-inventory_player = Inventory(5, 5, 42, 112)
+inventory_player = None
 inventory_open = False
 inventory_pos_selected = None
 inventory_selected = None
+patches = []
+potions = None
 
 seed = None
 all_ingredients = {}
@@ -86,8 +91,8 @@ def mouse_global_var(button, pos):
 
     if game_started and not autoscroll:
         inventory_player.mouse(button, pos)
-        trader.mouse(button, pos)
         if scene == 1:
+            trader.mouse(button, pos)
             for layer in layers:
                 layer.mouse(button, pos)
 
@@ -95,9 +100,7 @@ def mouse_global_var(button, pos):
 
     #update
 def update_global_var():
-    global scroll_y
-    global absolutey
-    global autoscroll
+    global scroll_y, absolutey, autoscroll
     global game_started
     global game_lost
     global scene
@@ -110,34 +113,87 @@ def update_global_var():
     global inventory_player
     global layers
     global trader
+    global all_monsters
+    global wave
+    global patches
+    global potions
     
     absolutey += scroll_y
 
     
     if game_started and game_start:
+
         game_start = False        
 
-        seed = random.randint(0,255)        
+        seed = random.randint(0, 1000)        
         random.seed(seed)
                 
         all_ingredients = {
-            'leaf': Item('leaf', 'ingredient', 50, 'items/leaf', 'fire'),
-            'cherry': Item('cherry', 'ingredient', 100, 'items/cherry', 'pulse'),
-            'dead_worm': Item('dead_worm', 'ingredient', 0, 'monster/worm_dead', 'slow')
+            'leaf': Item('Blatt', 'ingredient', 200, 'items/leaf', 'fire'),
+            'cherry': Item('Kirsche', 'ingredient', 300, 'items/cherry', None),
+            'banana': Item('Banane', 'ingredient', 300, 'items/banana', None),
+            'dragonfruit': Item('Drachenfrucht', 'ingredient', 400, 'items/dragonfruit', 'pulse'),
+            'herbs': Item('Kräuter', 'ingredient', 400, 'items/herbs', 'poison'),
+            'lanterfruit': Item('Laternenfrucht', 'ingredient', 300, 'items/lanternfruit', None),
+            'plum': Item('Pflaume', 'ingredient', 400, 'items/plum', 'ice'),
+            'spikefruit': Item('Stachelfrucht', 'ingredient', 400, 'items/spikefruit', 'slow'),
+            'strawberry': Item('Erdbeere', 'ingredient', 300, 'items/strawberry', None),
+            'dead_worm': Item('Toter Wurm', 'ingredient', 0, 'monster/worm_dead', 'slow'),
+            'dead_ghost': Item('Toter Geist', 'ingredient', 0, 'monster/ghost_dead', 'ice'),
+            'dead_slime': Item('Toter Schleim', 'ingredient', 0, 'monster/slime_dead', 'fire'),
+            'dead_spider': Item('Tote Spinne', 'ingredient', 0, 'monster/spider_dead', 'poison'),
+            'dead_spinner': Item('Toter Schneider', 'ingredient', 0, 'monster/spinner_dead', 'pulse')
             }
+        
+        all_monsters = [
+            {
+                'image': 'monster/worm',
+                'hp': 50,
+                'speed': 0.6,
+                'loot': all_ingredients['dead_worm']
+                     },
+            {
+                'image': 'monster/slime',
+                'hp': 80,
+                'speed': 1,
+                'loot': all_ingredients['dead_slime']
+                     },
+            {
+                'image': 'monster/ghost',
+                'hp': 50,
+                'speed': 1.2,
+                'loot': all_ingredients['dead_ghost']
+                     },
+            {
+                'image': 'monster/spider',
+                'hp': 70,
+                'speed': 1.1,
+                'loot': all_ingredients['dead_spider']
+                     },
+            {
+                'image': 'monster/spinner',
+                'hp': 100,
+                'speed': 1.3,
+                'loot': all_ingredients['dead_spinner']
+                     }
+        ]
 
-        inventory_player.add_item(0, 0, all_ingredients['dead_worm'])
-        inventory_player.add_item(1, 0, all_ingredients['leaf'])        
-        inventory_player.add_item(2, 0, all_ingredients['cherry'])        
-        inventory_player.add_item(0, 1, all_ingredients['dead_worm'])
-        inventory_player.add_item(1, 1, all_ingredients['leaf'])        
-        inventory_player.add_item(2, 1, all_ingredients['cherry'])
-        inventory_player.add_item_on_empty(Item('Debug Kill', 'potion', 0, None, {'fire':100}))
+        
+        for i in range(4):
+            patches.append(Patch(300 + i*250, 785))
+        potions = Brew_potions(660, 450)
 
+        wave = WaveManager()
         trader = Trader()
+        inventory_player = Inventory(5, 5, 42, 112)
+
+        inventory_player.add_item(1, 0, all_ingredients['leaf'])        
+        inventory_player.add_item_on_empty(Item('Debug Feuer', 'potion', 0, None, {'fire':100}))
+        inventory_player.add_item_on_empty(Item('Debug Pulse', 'potion', 0, None, {'pulse':100}))
 
     if game_started:
-        trader.update()
+        if scene == 1:
+            trader.update()
 
         if time < duration_day and not night:
             time += 1
@@ -147,17 +203,17 @@ def update_global_var():
             time -= 1
             if  duration_day - time <= 255:
                 darkness = duration_day - time
-        elif not night:
+        elif wave.ended() and not night:
                 wave.next_wave()
                 night = True
         elif wave.ended() and night:
                 night = False
-        wave.update()
 
+        wave.update()
         inventory_player.update()
     
-    for layer in layers:
-        layer.update()
+        for layer in layers:
+            layer.update()
     
     if not autoscroll or not (HEIGHT < absolutey < 1680):
        scroll_y = 0
@@ -176,11 +232,11 @@ def draw_global_var(screen):
     
     if game_started:
         inventory_player.draw(screen)
-        trader.draw(screen)
         if scene == 1:
+            trader.draw(screen)
             for layer in layers:
                 layer.draw(screen)
-        wave.draw()
+        wave.draw(screen)
 
 def game_setback():
     global scroll_y
@@ -198,8 +254,13 @@ def game_setback():
     global game_start
     global seed
     global trade_allowed
+    global inventory_player
+    global patches
+    global potions
 
-
+    potions = None
+    inventory_player = None
+    patches = None
     trade_allowed = False
     darkness = 0
     scene = 1
@@ -207,8 +268,8 @@ def game_setback():
     scroll_y = -10
     game_started = False
     game_lost = False     
-    wave.wave = 1
-    time = duration_day
+    wave = None
+    time = 0
     night = False
     inventory_open = False
     inventory_pos_selected = None

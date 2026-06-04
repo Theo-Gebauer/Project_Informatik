@@ -8,7 +8,7 @@ from layers import Layer
 #vars
 duration_day = 3600
 background_night = pygame.image.load('images/hintergrund_nacht.png')
-background_night.set_alpha(0)
+background_night.set_alpha(255)
 
 #Actors
 clouds = [

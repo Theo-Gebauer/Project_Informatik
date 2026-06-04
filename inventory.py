@@ -26,8 +26,6 @@ class Inventory:
             for j in range(len(self.item_slot[i])):
                 if self.item_slot[i][j] is None:
                     self.item_slot[i][j] = item
-                    print(f'{i} | {j}')
-                    print(item.name)
                     added = True
                     break
             if added:
@@ -70,7 +68,6 @@ class Inventory:
         global_var.trade_allowed = False
         selected_item = None
         if button == 1 and global_var.inventory_open:
-            found = False
             for i in range(len(self.item_slot)):
                 for j in range(len(self.item_slot[i])):
                     self.inventory_background[i][j].image = 'panel_brown'
@@ -95,8 +92,6 @@ class Inventory:
                         if global_var.inventory_selected is not None:
                             global_var.inventory_selected.inventory_background[global_var.inventory_pos_selected[0]][global_var.inventory_pos_selected[1]].image = 'panel_brown'
                             
-                            print('tauschen')
-
                             item_temp = self.item_slot[i][j]
                             self.add_item(i, j, global_var.inventory_selected.item_slot[global_var.inventory_pos_selected[0]][global_var.inventory_pos_selected[1]])
                             global_var.inventory_selected.add_item(global_var.inventory_pos_selected[0], global_var.inventory_pos_selected[1], item_temp)
@@ -138,13 +133,13 @@ class Inventory:
                     i += 1 
 
                 screen.draw.filled_rect(
-                    Rect(mouse_x - 120, mouse_y  - i * 20 - 5, 120, i * 20 + 25),
+                    Rect(mouse_x - 135, mouse_y  - i * 20 - 5, 135, i * 20 + 25),
                     (30, 30, 30)
                 )
 
                 screen.draw.text(
                     self.hovered_item.name,
-                    (mouse_x - 115, mouse_y - i * 20),
+                    (mouse_x - 130, mouse_y - i * 20),
                     color="white"
                 )
                 
@@ -153,13 +148,13 @@ class Inventory:
                     if effect_name in self.hovered_item.discovered_effects:
                         screen.draw.text(
                             f"{effect_name}: {value}",
-                            (mouse_x - 115, mouse_y - i * 20 + y_offset),
+                            (mouse_x - 130, mouse_y - i * 20 + y_offset),
                             color="white"
                         )
                     else:
                         screen.draw.text(
                             "- Unbekannt -",
-                            (mouse_x - 115, mouse_y - i * 20 + y_offset),
+                            (mouse_x - 130, mouse_y - i * 20 + y_offset),
                             color="white"
                         )
 

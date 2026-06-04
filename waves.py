@@ -1,30 +1,15 @@
 from monster import Monster
 import global_var
+import random
 
 class WaveManager:
 
     def __init__(self):
         self.wave = 0
-
         self.monsters = []
-
-        self.monsters_to_spawn = 0
-
+        self.difficulty = 0
         self.spawn_delay = 60
-
-    def update(self):
-        self.spawn_delay -= 1
-
-        #spawning
-        if self.monsters_to_spawn > 0:
-
-            if self.spawn_delay < 0:
-                hp = 50 + self.wave * 20
-                speed = self.wave * 0.1 + 1
-
-                dead_worm = global_var.all_ingredients['dead_worm']
-
-                monster = Monster("worm", hp, speed, global_var.absolutex - 200, global_var.absolutey - 30, 'monster/worm', dead_worm,[ 
+        self.path = [ 
                     (740, 890), (830, 730),
                     (615, 730), (500, 590),
                     (740, 590), (830, 450),
@@ -33,12 +18,34 @@ class WaveManager:
                     (615, 180), (500, 40),
                     (710, 40), (830, -100),
                     (615, -100), (500, -240)
-                    ])
+                    ]
+
+    def update(self):
+        self.spawn_delay -= 1
+
+        #spawning
+        if self.spawn_delay < 0:
+
+            if self.difficulty > 0:
+                difficulty_monster = random.randint(0, self.difficulty) % (len(global_var.all_monsters) - 1)
+                print(f'{self.difficulty} - {difficulty_monster}')
+
+                properties_monster = global_var.all_monsters[difficulty_monster]
+
+                monster = Monster(
+                    properties_monster['image'], 
+                    properties_monster['hp'] + 0.05 * self.wave * properties_monster['hp'], 
+                    properties_monster['speed'] + 0.01 * self.wave * properties_monster['hp'], 
+                    global_var.absolutex - 200, global_var.absolutey - 30, 
+                    properties_monster['loot'],
+                    self.path
+                    )
                 
                 self.monsters.append(monster)
 
-                self.monsters_to_spawn -= 1
-                self.spawn_delay = 90
+                self.difficulty -= difficulty_monster + 1
+
+            self.spawn_delay = 90
 
         #moving monsters
         for monster in self.monsters:
@@ -53,12 +60,12 @@ class WaveManager:
 
     def next_wave(self):
         self.wave += 1
-        self.monsters_to_spawn = self.wave * 3
+        self.difficulty = self.wave * 3 - 2
 
-    def draw(self):
+    def draw(self, screen):
         if global_var.scene == 1:
             for monster in self.monsters:
-                monster.draw()
+                monster.draw(screen)
 
     def ended(self):
-        return len(self.monsters) == 0 and self.monsters_to_spawn == 0
+        return len(self.monsters) == 0 and self.difficulty <= 0

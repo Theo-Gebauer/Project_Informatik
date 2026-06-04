@@ -30,10 +30,14 @@ class Trader:
         self.selling_items.move(0, global_var.scroll_y)
         self.buying_items.move(0, global_var.scroll_y)
 
+        self.selling_items.update()
+        self.buying_items.update()
+
     def draw(self, screen):
+        self.selling_items.draw(screen)
+
         if not global_var.night:
             self.actor.draw()
-            self.selling_items.draw(screen)
             self.buying_items.draw(screen)
 
             if global_var.inventory_open:

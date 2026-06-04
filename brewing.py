@@ -1,8 +1,6 @@
-import random
 import global_var
 from inventory import Inventory
 from pgzero.actor import Actor
-import pygame
 from items import Item
 
 class Brew_potions():
@@ -19,7 +17,7 @@ class Brew_potions():
                 possible_effects[effect] = 0
 
             for i in range(len(self.ingredients_slot.item_slot[0])):
-                if not self.ingredients_slot.item_slot[0][i] == 0:
+                if self.ingredients_slot.item_slot[0][i] is not None:
                     if self.ingredients_slot.item_slot[0][i].type == 'ingredient':
                         for effect, value in self.ingredients_slot.item_slot[0][i].effects.items():
                             possible_effects[effect] += value

@@ -1,7 +1,8 @@
 from pgzero.actor import Actor
 import global_var
-import random
 import math
+import pygame
+from pgzero.builtins import Rect
 
 
 #Actors
@@ -9,12 +10,11 @@ import math
 
 #Classes
 class Monster():
-    def __init__(self, image, hp, speed, x, y, type, loot, waypoints):
+    def __init__(self, image, hp, speed, x, y, loot, waypoints):
         self.hp = hp
+        self.max_hp = hp
         self.speed = speed
-        self.type = type
         self.layer = 0
-        self.type = type
         self.waypoints = waypoints
         self.next_waypoint = 0
         self.loot = loot
@@ -86,22 +86,22 @@ class Monster():
         for effect_name, strength in effect.items():
             if effect_name == 'poison':
                 self.effects[effect_name]['duration'] = strength * 200
-                self.effects[effect_name]['dmg'] = strength * 0.02
+                self.effects[effect_name]['dmg'] = strength * 0.1
                 self.effects[effect_name]['timer_apply'] =  100 // strength + 1
             elif effect_name == 'fire':
                 self.effects[effect_name]['duration'] = strength * 20
-                self.effects[effect_name]['dmg'] = strength * 0.1 + 1
+                self.effects[effect_name]['dmg'] = strength * 0.5
                 self.effects[effect_name]['timer_apply'] =  100 // strength + 1
                 self.effects['ice']['duration'] = 0
             elif effect_name == 'ice':
                 self.effects[effect_name]['duration'] = strength * 20
-                self.effects[effect_name]['dmg'] = strength * 0.05
+                self.effects[effect_name]['dmg'] = strength * 0.2
                 self.effects[effect_name]['timer_apply'] =  100 // strength + 1
-                self.effects[effect_name]['speed_decrease'] = strength * 0.02
+                self.effects[effect_name]['speed_decrease'] = strength * 0.1
                 self.effects['fire']['duration'] = 0
                 self.effects['slow']['duration'] = strength * 10
             elif effect_name == 'slow':
-                self.effects[effect_name]['duration'] = strength * 200
+                self.effects[effect_name]['duration'] = strength * 100
                 self.effects[effect_name]['speed_decrease'] = strength * 0.1
             elif effect_name == 'pulse':
                 if global_var.pulse == True:
@@ -120,14 +120,24 @@ class Monster():
                 if properties['duration'] <= properties['timer']:
                     self.effects[effect_name]['speed_decrease'] = 0
 
-    def draw(self):
-        self.actor.draw()
-
     def dmg(self, dmg):
         self.hp -= dmg
         if self.is_dead():
             global_var.inventory_player.add_item_on_empty(self.loot)
-            print(f'geadded {self.loot.name}')
 
     def is_dead(self):
         return self.hp <= 0
+    
+    def draw(self, screen):
+        self.actor.draw()
+
+        screen.draw.filled_rect(
+            Rect(self.actor.x - 30, self.actor.y - 30, 60, 10),
+            (1, 1, 1)
+        )
+
+        screen.draw.filled_rect(
+            Rect(self.actor.x - 30, self.actor.y - 30, 60 * self.hp / self.max_hp, 10),
+            (220, 50, 50)
+        )
+
