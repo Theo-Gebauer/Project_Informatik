@@ -17,10 +17,10 @@ class Inventory:
                 self.inventory_background[i].append(Actor('panel_brown', center = (x + i*65, y + j*65), anchor = ('center', 'center')))
                 self.item_slot[i].append(None)
 
-    def add_item(self, colum, row, item):
+    def add_item(self, colum, row, item): #adds item on given slot
         self.item_slot[colum][row] = item
 
-    def add_item_on_empty(self, item):
+    def add_item_on_empty(self, item): #adds item on first empty slot there is
         added = False
         for i in range(len(self.item_slot)):
             for j in range(len(self.item_slot[i])):
@@ -35,28 +35,28 @@ class Inventory:
             pass
 
         
-    def del_item(self, colum, row):
+    def del_item(self, colum, row): #deletes item on given slot
         self.item_slot[colum][row] = None
 
-    def del_all(self):
+    def del_all(self):  #deletes all items in this inventory
         for i in range(len(self.item_slot)):
             for j in range(len(self.item_slot[i])):
                 self.item_slot[i][j] = None
 
-    def empty(self, colum, row):
+    def empty(self, colum, row): #returns whether this inventory has no item on given slot
         return self.item_slot[colum][row] is None
     
-    def add_inv(self, x, y):
+    def add_inv(self, x, y): #adds an inventory slot (currently not in use/for fututre updates)
         self.item_slot[0].append(None)
         self.inventory_background[0].append(Actor('panel_brown', center = (x, y), anchor = ('center', 'center')))
 
-    def move(self, dx, dy):
+    def move(self, dx, dy): #moves the actor of the inventory
         for i in range(len(self.inventory_background)):
             for j in range(len(self.inventory_background[i])):
                 self.inventory_background[i][j].x += dx
                 self.inventory_background[i][j].y += dy
 
-    def get_value(self):
+    def get_value(self): #returns the added value of all items in this inventory
         value = 0
         for i in range(len(self.item_slot)):
             for j in range(len(self.item_slot[i])):
@@ -64,7 +64,7 @@ class Inventory:
                     value += self.item_slot[i][j].value
         return value
 
-    def trade(self, button, pos, value1):
+    def trade(self, button, pos, value1): #checks if selected item from inventory has lesser then or equal value as a given value 
         global_var.trade_allowed = False
         selected_item = None
         if button == 1 and global_var.inventory_open:
@@ -82,11 +82,10 @@ class Inventory:
         return selected_item
 
 
-
-    def mouse(self, button, pos):
+    def mouse(self, button, pos): 
         if button == 1 and global_var.inventory_open:
             found = False
-            for i in range(len(self.item_slot)):
+            for i in range(len(self.item_slot)): #if no inventory slot is selected -> selects a new inventory slot; if an inventory slot is slected -> exchanges contents of slected and clicked 
                 for j in range(len(self.item_slot[i])):
                     if global_var.button_pressed(pos, self.inventory_background[i][j].x, self.inventory_background[i][j].y, 32, 32):
                         if global_var.inventory_selected is not None:
@@ -107,7 +106,7 @@ class Inventory:
                 if found:
                     break
 
-    def update(self):
+    def update(self): #if mouse hovers over inventory slot -> shows properties of item in this slot
         for i in range(len(self.item_slot)):
             for j in range(len(self.item_slot[i])):
                 if self.item_slot[i][j]is not None:                    
@@ -119,15 +118,20 @@ class Inventory:
             
     def draw(self, screen):
         if global_var.inventory_open:
-            for i in range(len(self.item_slot)):
+            for i in range(len(self.item_slot)): #draws inventory and items in inventory
                 for j in range(len(self.item_slot[i])):
                     self.inventory_background[i][j].draw()
                     if self.item_slot[i][j] is not None:
                         self.item_slot[i][j].draw(self.inventory_background[i][j].x, self.inventory_background[i][j].y, screen)
             
-            if self.hovered_item is not None:
+            if self.hovered_item is not None: #draws properties of item if mouse is hovering above it
                 mouse_x, mouse_y = pygame.mouse.get_pos()
                 i = len(self.hovered_item.effects)
+
+                if mouse_x - 135 < 0:
+                    mouse_x = 135
+                if mouse_y - i * 20 - 5 < 0:
+                    mouse_y = i * 20 + 5
 
                 screen.draw.filled_rect(
                     Rect(mouse_x - 135, mouse_y  - i * 20 - 5, 135, i * 20 + 25),

@@ -17,6 +17,8 @@ class Layer:
         self.potion_slot = Inventory(1, 1, 420, global_var.absolutey - self.layer * 140 - 110)
         self.animation = Actor('animations/nothing', midbottom = (global_var.WIDTH // 2 - 40, global_var.absolutey - self.layer * 137 - 105))
         
+        self.layer = layer
+        
         self.frame = 0
         self.frames = {
             'fire': [
@@ -63,7 +65,7 @@ class Layer:
         self.potion_slot.inventory_background[0][0].y = global_var.absolutey - self.layer * 140 - 110
         self.potion_slot.update()
 
-        if not self.potion_slot.empty(0, 0):
+        if not self.potion_slot.empty(0, 0): #determines effect on itself/updates duration from this effect
             if self.potion_slot.item_slot[0][0].type == 'potion':
 
                 if not self.potion_used:
@@ -77,14 +79,14 @@ class Layer:
                             self.pulse = False
 
                 if self.effect_timer < self.effect_duration:
-                    global_var.pulse = False
+                    global_var.pulse[self.layer] = False
                     self.effect_timer += 1
                     self.potion_slot.item_slot[0][0].fill_level(1 - self.effect_timer/self.effect_duration)
                     self.potion_used = True
                     self.animate()
                     if self.pulse:
                         if self.effect_timer % (1000 // self.effect['pulse']) == 0:
-                            global_var.pulse = True
+                            global_var.pulse[self.layer] = True
 
                 else:
                     self.frame = 0
@@ -101,7 +103,7 @@ class Layer:
         else:
             self.effect = {}
 
-    def animate(self):
+    def animate(self): #animates the effect of a potion on this layer
         if self.pulse:
             if self.effect_timer % (1000 // self.effect['pulse']) == 0 or len(self.frames[self.animation_effect]) - 1 > self.frame > 0:
                 self.frame += 1
@@ -118,7 +120,7 @@ class Layer:
         
     def mouse(self, button, pos):
         if not self.potion_slot.empty(0, 0):
-            if not self.potion_slot.item_slot[0][0].type == 'potion':
+            if not self.potion_slot.item_slot[0][0].type == 'potion': #locks slot from being changed while a potion is in it
                 self.potion_slot.mouse(button, pos)
         else:
             self.potion_slot.mouse(button, pos)

@@ -35,7 +35,7 @@ class Item():
                 self.value = value * 2
 
 
-    def generate_effects(self, standart_effect):    
+    def generate_effects(self, standart_effect): #generates 1-3 (if the same is selected twice the second one willbe saved) random effects
 
         effects = {}
 
@@ -48,14 +48,14 @@ class Item():
 
         return(effects)
     
-    def fill_level(self, fill_level):
+    def fill_level(self, fill_level): #returns fill level on this potion
         self.vis_height = int(self.liquid.get_height() * fill_level)
     
     def draw(self, x, y, screen):
         self.actor.center = (x, y)
         self.actor.draw()
         
-        if self.type == 'potion':
+        if self.type == 'potion': #draws liquid inside a potion
             rect = pygame.Rect(
                 0,
                 self.liquid.get_height() - self.vis_height,

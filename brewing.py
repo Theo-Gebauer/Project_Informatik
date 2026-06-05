@@ -9,6 +9,7 @@ class Brew_potions():
         self.ingredients_slot = Inventory(1, 2, x, y - 32)
         self.button_actor = Actor('alchemy/brew_button', center = (x, y + 200), anchor = ('center', 'center'))
 
+    #action on mouse
     def mouse(self, button, pos):
         if button == 1 and global_var.button_pressed(pos, self.button_actor.x, self.button_actor.y, 165, 46) and (not self.ingredients_slot.empty(0, 0) or not self.ingredients_slot.empty(0, 1)):
             
@@ -16,23 +17,23 @@ class Brew_potions():
             for effect in global_var.all_effects:
                 possible_effects[effect] = 0
 
-            for i in range(len(self.ingredients_slot.item_slot[0])):
+            for i in range(len(self.ingredients_slot.item_slot[0])): #adding all effects of all items with which is brewed
                 if self.ingredients_slot.item_slot[0][i] is not None:
                     if self.ingredients_slot.item_slot[0][i].type == 'ingredient':
                         for effect, value in self.ingredients_slot.item_slot[0][i].effects.items():
                             possible_effects[effect] += value
 
             max_value = 'poison'
-            for effect, value in possible_effects.items():
+            for effect, value in possible_effects.items(): #searching for effect with highest value
                 if value > possible_effects[max_value]:
                     max_value = effect
             
-            if possible_effects[max_value] > 0:
+            if possible_effects[max_value] > 0: #creating new potion based on effect with highest value
                 resulting_effect = {}
                 resulting_effect[max_value] = possible_effects[max_value]
                 self.potion_slot.item_slot[0][0] = Item('Trank', 'potion', 0, None, resulting_effect)
 
-                for i in range(len(self.ingredients_slot.item_slot[0])):
+                for i in range(len(self.ingredients_slot.item_slot[0])): #adding discovered effects to all items which influenced the final potion
                     if self.ingredients_slot == global_var.inventory_selected:
                         self.ingredients_slot.mouse(1, (self.ingredients_slot.inventory_background[0][i].x, self.ingredients_slot.inventory_background[0][i].y))                
                     if not self.ingredients_slot.empty(0, i):

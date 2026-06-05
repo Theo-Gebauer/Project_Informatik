@@ -16,10 +16,10 @@ def mouse_menu(button,pos):
         global_var.game_started = True
         global_var.game_start = True
     elif global_var.game_started and button == 1 and global_var.button_pressed(pos, endbutton.x, endbutton.y, 110, 30):     #endbutton
-            global_var.autoscroll = True
-            global_var.scroll_y = -10
-            global_var.game_started = False
-            global_var.game_lost = True
+        global_var.autoscroll = True
+        global_var.scroll_y = -10
+        global_var.game_started = False
+        global_var.game_lost = True
 
 
     #update

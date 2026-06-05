@@ -17,6 +17,7 @@ class Trader:
     def mouse(self, button, pos):
         self.selling_items.mouse(button, pos)
 
+        #trades items if trade is allowed (see function trade in Inventory)
         if global_var.trade_allowed and global_var.button_pressed(pos, self.trade_button.x, self.trade_button.y, 200, 100) and global_var.inventory_open and not global_var.night:
             self.selling_items.del_all()            
             global_var.trade_allowed = False

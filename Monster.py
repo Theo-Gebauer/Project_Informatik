@@ -58,13 +58,13 @@ class Monster():
 
         distance = math.hypot(dx, dy)
 
-        while (self.effects['ice']['speed_decrease'] + self.effects['slow']['speed_decrease']) >= self.speed - 0.5:
+        while (self.effects['ice']['speed_decrease'] + self.effects['slow']['speed_decrease']) >= self.speed - 0.5: #makes shure monster can move
             if self.effects['ice']['speed_decrease']  > 0:
                 self.effects['ice']['speed_decrease'] = self.effects['ice']['speed_decrease'] - 0.05
             if self.effects['slow']['speed_decrease']  > 0:
                 self.effects['slow']['speed_decrease'] = self.effects['slow']['speed_decrease'] - 0.05
 
-        if distance > (self.speed - (self.effects['ice']['speed_decrease'] + self.effects['slow']['speed_decrease'])):
+        if distance > (self.speed - (self.effects['ice']['speed_decrease'] + self.effects['slow']['speed_decrease'])): #checks if next waypoint will be reached
 
             dx /= distance
             dy /= distance
@@ -80,11 +80,11 @@ class Monster():
         
         self.effect_apply()
 
-        if self.next_waypoint % 2 == 0 and self.actor.x >= 480:
+        if self.next_waypoint % 2 == 0 and self.actor.x >= 480: #determines effect on current layer
             if not global_var.layers[self.next_waypoint // 2].effect == {}:
                 self.effect_layer(global_var.layers[self.next_waypoint // 2].effect)
 
-    def effect_layer(self, effect):
+    def effect_layer(self, effect): #determines properties of effect on current layer
         for effect_name, strength in effect.items():
             if effect_name == 'poison':
                 self.effects[effect_name]['duration'] = strength * 200
@@ -106,11 +106,10 @@ class Monster():
                 self.effects[effect_name]['duration'] = strength * 100
                 self.effects[effect_name]['speed_decrease'] = strength * 0.1
             elif effect_name == 'pulse':
-                print('help')
-                if global_var.pulse == True:
+                if global_var.pulse[self.next_waypoint // 2] == True:
                     self.dmg(strength)
 
-    def effect_apply(self):
+    def effect_apply(self): #applys and updates effects
         for effect_name, properties in self.effects.items():
             if properties['duration'] > properties['timer']:
                 properties['timer'] += 1
@@ -123,7 +122,7 @@ class Monster():
                 if properties['duration'] <= properties['timer']:
                     self.effects[effect_name]['speed_decrease'] = 0
 
-    def dmg(self, dmg):
+    def dmg(self, dmg): #deals damage
         self.hp -= dmg
         if self.is_dead():
             global_var.inventory_player.add_item_on_empty(self.loot)
@@ -134,6 +133,7 @@ class Monster():
     def draw(self, screen):
         self.actor.draw()
 
+        #draws health bar
         screen.draw.filled_rect(
             Rect(self.actor.x - 30, self.actor.y - 30, 60, 10),
             (1, 1, 1)

@@ -18,32 +18,33 @@ class Patch:
         self.seed_slot.update()
         self.harvest_slot.update()
 
-        if not self.growing_item == self.seed_slot.item_slot[0][0] and not self.seed_slot.empty(0, 0):
+        if not self.growing_item == self.seed_slot.item_slot[0][0] and not self.seed_slot.empty(0, 0): #resets growth if seed is changed during growing
             self.growth = 0
             self.growth_delay = 0
 
-        if not self.seed_slot.empty(0, 0) and self.growth <= 4 and not self.seed_slot.item_slot[0][0].delay == 0:
+        if not self.seed_slot.empty(0, 0) and self.growth <= 4 and not self.seed_slot.item_slot[0][0].delay == 0: #updates growth state of plant
             self.growing_item = self.seed_slot.item_slot[0][0]
             if self.growth_delay > 0:
                 self.growth_delay -= 1
             else:
                 self.growth += 1
                 self.growth_delay = self.seed_slot.item_slot[0][0].delay * random.uniform(0.9, 1.1)
-        elif not self.growth_delay == 0 and self.seed_slot.empty(0, 0) and self.harvest_slot.empty(0, 0) and self.harvest_slot.empty(1, 0):
+        elif not self.growth_delay == 0 and self.seed_slot.empty(0, 0) and self.harvest_slot.empty(0, 0) and self.harvest_slot.empty(1, 0): #resets growth after every items is taken
             self.growth = 0
             self.growth_delay =  0
         elif self.growth > 4 and not self.seed_slot.empty(0, 0):
             self.harvest_slot.add_item(0, 0, self.seed_slot.item_slot[0][0])
             self.harvest_slot.add_item(1, 0, self.seed_slot.item_slot[0][0])
             self.seed_slot.del_item(0, 0)
-            if global_var.inventory_selected == self.seed_slot:
+
+            if global_var.inventory_selected == self.seed_slot: #deselects seed slot if not visible
                 self.seed_slot.mouse(1, (self.seed_slot.inventory_background[0][0].x, self.seed_slot.inventory_background[0][0].y))
-        elif self.harvest_slot.empty(0, 0) and self.harvest_slot.empty(1, 0):
+        elif self.harvest_slot.empty(0, 0) and self.harvest_slot.empty(1, 0): #makes seed slot visible again if harvest slot is empty
             self.growth = 0
             self.growth_delay = 0
 
     def mouse(self, button, pos):
-        if self.growth <= 4: 
+        if self.growth <= 4: #allows only access to visible slots
             self.seed_slot.mouse(button, pos)
         else:
             self.harvest_slot.mouse(button, pos)
@@ -51,7 +52,7 @@ class Patch:
 
     def draw(self, screen):
         self.actor.draw()
-        if self.growth == 1:
+        if self.growth == 1: #draws current growth state
             Actor('greenhouse/pflanze_1', midbottom = (self.actor.x, self.actor.y)).draw()
         elif self.growth == 2:
             Actor('greenhouse/pflanze_2', midbottom = (self.actor.x, self.actor.y)).draw()
@@ -85,7 +86,7 @@ class Patch:
             screen.surface.blit(growing_item_1, (self.actor.x + 25, self.actor.y - 345))         
             screen.surface.blit(growing_item_1, (self.actor.x + 25, self.actor.y - 460))
 
-        if global_var.inventory_open:
+        if global_var.inventory_open: #draws visible slots
             if self.growth <= 4:
                 self.seed_slot.draw(screen)
             else:

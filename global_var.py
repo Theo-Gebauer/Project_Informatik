@@ -10,6 +10,8 @@ from trader import Trader
 from patches import Patch
 from brewing import Brew_potions
 
+
+#variables
 WIDTH = 1420
 HEIGHT = 930 
 scroll_y = 0
@@ -44,16 +46,20 @@ inventory_selected = None
 
 
 patches = []
+layers = []
+pulse = []
 for i in range(4):
     patches.append(Patch(300 + i*250, 785))
 potions = Brew_potions(700, 450)
 inventory_player = Inventory(5, 5, 42, 112)
-layers = []
 for i in range(8):
     layers.append(Layer(i))
+    pulse.append(False)
 
 seed = None
+
 all_ingredients = {}
+
 all_effects = [
         'poison',
         'fire',
@@ -61,6 +67,7 @@ all_effects = [
         'slow',
         'pulse'
 ]
+
 effect_to_color = {
     'poison': (60, 255, 20),
     'fire': (255, 80, 0),
@@ -68,7 +75,6 @@ effect_to_color = {
     'slow': (100, 100, 100),
     'pulse': (120, 0, 120)
 }
-pulse = False
 
 translation = {
     'poison': 'Gift',
@@ -138,7 +144,7 @@ def update_global_var():
     absolutey += scroll_y
 
     
-    if game_started and game_start:
+    if game_started and game_start: #creating all important variables during start of the game
 
         game_start = False        
 
@@ -207,7 +213,7 @@ def update_global_var():
         inventory_player.add_item_on_empty(Item('Debug Pulse', 'potion', 0, None, {'poison':10}))
         inventory_player.add_item_on_empty(Item('Debug Pulse', 'potion', 0, None, {'ice':10}))
 
-    if game_started:
+    if game_started: #updating during the running game
         if scene == 1:
             trader.update()
             for layer in layers:
@@ -231,14 +237,14 @@ def update_global_var():
         inventory_player.update()
         potions.update()
     
-    if not autoscroll or not (HEIGHT < absolutey < 1680):
+    if not autoscroll or not (HEIGHT < absolutey < 1680): #resetting scroll variable
        scroll_y = 0
        autoscroll = False
 
     if game_lost:
         game_setback()
                    
-
+    #draw
 def draw_global_var(screen):        
     global game_started
     global wave
@@ -258,7 +264,8 @@ def draw_global_var(screen):
         wave.draw(screen)
 
         clock.draw()
-        #rotating the arrow
+
+        #rotating the arrow of the clock
         if night:
             rotated = pygame.transform.rotate(clock_arrow, 180 * abs(time)/duration_day)
         else:
@@ -266,7 +273,7 @@ def draw_global_var(screen):
         rect = rotated.get_rect(center = (clock.x, clock.y))
         screen.surface.blit(rotated, rect.topleft)
 
-
+    #resetting all important variables so a new game can start
 def game_setback():
     global scroll_y
     global autoscroll

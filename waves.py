@@ -23,7 +23,7 @@ class WaveManager:
     def update(self):
         self.spawn_delay -= 1
 
-        #spawning
+        #spawning monsters
         if self.spawn_delay < 0:
 
             if self.difficulty > 0:
@@ -46,7 +46,6 @@ class WaveManager:
 
             self.spawn_delay = 90
 
-        #moving monsters
         for monster in self.monsters:
             monster.move()
 
@@ -66,5 +65,5 @@ class WaveManager:
             for monster in self.monsters:
                 monster.draw(screen)
 
-    def ended(self):
+    def ended(self): #returns whether all monsters are dead and there are no more to comme in current wave
         return len(self.monsters) == 0 and self.difficulty <= 0

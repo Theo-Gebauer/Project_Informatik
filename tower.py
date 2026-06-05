@@ -4,7 +4,7 @@ import random
 import pygame
 
 
-#vars
+#variables
 duration_day = 3600
 background_night = pygame.image.load('images/hintergrund_nacht.png')
 background_night.set_alpha(255)
@@ -56,7 +56,7 @@ def update_tower():
     #draw
 def draw_tower(screen):
     background.draw()
-    if global_var.darkness > 0:
+    if global_var.darkness > 0: #overlays night image during night
         background_night.set_alpha(global_var.darkness)
         screen.surface.blit(background_night, (0, global_var.absolutey - 1680))
 
