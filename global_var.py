@@ -206,8 +206,8 @@ def update_global_var():
 
         inventory_player.add_item(2, 2, all_ingredients['leaf'])        
         inventory_player.add_item_on_empty(Item('Debug Feuer', 'potion', 0, None, {'fire':10}))
-        inventory_player.add_item_on_empty(Item('Debug Pulse', 'potion', 0, None, {'pulse':20}))
-        inventory_player.add_item_on_empty(Item('Debug Pulse', 'potion', 0, None, {'pulse':20}))
+        #inventory_player.add_item_on_empty(Item('Debug Pulse', 'potion', 0, None, {'pulse':20}))
+        #inventory_player.add_item_on_empty(Item('Debug Pulse', 'potion', 0, None, {'pulse':20}))
         inventory_player.add_item_on_empty(Item('Debug Pulse', 'potion', 0, None, {'pulse':20}))
         inventory_player.add_item_on_empty(Item('Debug Pulse', 'potion', 0, None, {'slow':10}))
         inventory_player.add_item_on_empty(Item('Debug Pulse', 'potion', 0, None, {'poison':10}))

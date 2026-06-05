@@ -22,6 +22,7 @@ class Brew_potions():
                     if self.ingredients_slot.item_slot[0][i].type == 'ingredient':
                         for effect, value in self.ingredients_slot.item_slot[0][i].effects.items():
                             possible_effects[effect] += value
+                            possible_effects[effect] = round(possible_effects[effect], 1)
 
             max_value = 'poison'
             for effect, value in possible_effects.items(): #searching for effect with highest value
