@@ -20,7 +20,7 @@ autoscroll = False
 absolutex = 0
 absolutey = 930
 
-clock = Actor('clock', center = (WIDTH // 2, 150), anchor = ('center', 'center'))
+clock = Actor('clock', center = (WIDTH // 2 + 300, 100), anchor = ('center', 'center'))
 clock_arrow = pygame.image.load('images/clock_arrow.png').convert_alpha()
 
 scene = 1
